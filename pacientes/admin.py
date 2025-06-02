@@ -6,6 +6,51 @@ from .models import Paciente
 
 @admin.register(Paciente)
 class PacienteAdmin(admin.ModelAdmin):
+        # ✅ ORGANIZAÇÃO DOS CAMPOS NO FORMULÁRIO (CADASTRO/EDIÇÃO)
+    fieldsets = (
+        ('Informações do Paciente', {
+            'fields': (
+                'data_agendamento',
+                'numero_registro',
+                'nome',
+                'risco',
+                'especialidade_primeiro_atendimento',
+                'hora_primeiro_atendimento',
+            )
+        }),
+        ('Especialidades', {
+            'fields': (
+                'especialidades_pendentes',
+                'especialidades_concluidas',
+            )
+        }),
+        ('Exames', { # Adicionado grupo para Exames
+            'fields': (
+                'exames_pendentes', # Campo adicionado ao form
+                'exames_concluidos',# Campo adicionado ao form
+            )
+        }),
+        ('Procedimentos', {
+            'fields': (
+                'procedimentos_pendentes',
+                'procedimentos_concluidos',
+            )
+        }),
+        ('Enfermagem', {
+            'fields': (
+                'enfermagem_pendentes',
+                'enfermagem_concluidos',
+            )
+        }),
+        ('Outras Solicitações', {
+            'fields': (
+                'solicitacoes_pendentes',
+                'solicitacoes_concluidos',
+            )
+        }),
+    )
+
+    # ✅ LISTAGEM NA TELA DE LISTA DE PACIENTES
     list_display = (
         'data_agendamento',
         'numero_registro',

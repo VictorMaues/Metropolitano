@@ -44,7 +44,7 @@ class Paciente(models.Model):
     ]
 
     data_agendamento = models.DateTimeField('Data e Hora da Entrada', default=timezone.now)
-    numero_registro = models.CharField('RH (Registro Hospitalar)', max_length=20, unique=True)
+    numero_registro = models.CharField('RH (Registro Hospitalar)', max_length=20, unique=True) #ver com o admin quantos caracteres são necessários para esse campo.
     nome = models.CharField('Nome', max_length=100)
     risco = models.CharField('Classificação de Risco', max_length=10, choices=CLASSIFICACAO_RISCO)
 
@@ -69,12 +69,12 @@ class Paciente(models.Model):
         blank=True,
     )
     exames_pendentes = MultiSelectField(
-        'Exames Concluídos',
+        'Exames Pendentes',
         choices=EXAMES,
         blank=True,
     )
     exames_concluidos = MultiSelectField(
-        'Exames Solicitados',
+        'Exames Concluídos',
         choices=EXAMES,
         blank=True,
     )
