@@ -137,6 +137,12 @@ JAZZMIN_SETTINGS = {
     # Title on the brand (19 chars max) (defaults to current_admin_site.site_header if absent or None)
     'site_brand': 'Hospital Metropolitano',
 
+    'site_logo': 'pacientes/img/logo.jpg',
+
+    'login_logo': 'pacientes/img/logo.jpg',
+    
+    'custom_css': 'pacientes/css/custom.css',
+
     'icons': {
         'auth': 'fas fa-users-cog',
         'auth.user': 'fas fa-user',
@@ -150,7 +156,7 @@ JAZZMIN_SETTINGS = {
     'welcome_sign': 'Bem-vindo(a) ao Hospital Metropolitano',
 
     # Copyright on the footer
-    'copyright': 'PycodeBR LTD',
+    'copyright': 'DEV_CAMUFLADO',
 
     # List of model admins to search from the search bar, search bar omitted if excluded
     # If you want to use a single search field you dont need to use a list, you can use a simple string 

@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.http import HttpResponse
 import csv
 from .models import Paciente
@@ -97,7 +98,7 @@ class PacienteAdmin(admin.ModelAdmin):
                 html += f'<span style="color:red; font-weight:bold; margin-right:8px;">{item} ✘</span><br>'
         if not html:
             return "Nenhum pendente"
-        return format_html(html)
+        return mark_safe(html)
 
     ####################################################################################################
 

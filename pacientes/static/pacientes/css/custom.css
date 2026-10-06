@@ -1,0 +1,10 @@
+/* Ajuste do tamanho da logo na tela de login */
+.login-logo img {
+    max-width: 250px !important; /* Altere este valor para ficar do tamanho que desejar */
+    height: auto !important;
+}
+
+/* Opcional: Ajuste do tamanho da logo no menu lateral de dentro do painel */
+.brand-link .brand-image {
+    max-height: 45px !important; /* Aumente ou diminua se precisar */
+}
