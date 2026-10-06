@@ -1,10 +1,167 @@
-/* Ajuste do tamanho da logo na tela de login */
+/* ========================================================
+   CUSTOM LOGIN SCREEN - Minimalist Split Screen + Glassmorphism
+   ======================================================== */
+
+/* Container da página de login (fundo com a imagem gerada) */
+body.login-page {
+    background: url('../img/bg-login.jpg') no-repeat center center fixed;
+    background-size: cover;
+    display: flex !important;
+    justify-content: flex-end !important; /* Move o card para a direita */
+    align-items: center !important;
+    position: relative;
+    padding: 0;
+    margin: 0;
+    height: 100vh;
+}
+
+/* Opcional: Efeito escuro leve na imagem inteira para destacar mais a tela de vidro */
+body.login-page::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: 0;
+}
+
+/* O Split Screen: Um painel de vidro fosco ocupando a direita */
+body.login-page::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 45%; /* Largura da "divisão" da tela */
+    min-width: 450px;
+    background: rgba(255, 255, 255, 0.35); /* Branco semi-transparente */
+    backdrop-filter: blur(25px); /* Efeito de Vidro Fosco (Glassmorphism) */
+    -webkit-backdrop-filter: blur(25px);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+/* Ajuste da caixa de login para ficar perfeitamente centralizada dentro do painel de vidro */
+.login-box {
+    position: absolute !important;
+    right: max(calc(22.5% - 200px), 25px) !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 400px !important;
+    margin: 0 !important;
+    z-index: 2 !important; /* Ficar na frente do vidro */
+}
+
+/* Tornando o card de login totalmente transparente (pois o vidro já está atrás dele) */
+.login-box .card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #333;
+}
+
+.login-card-body {
+    background: transparent !important;
+    padding: 20px 40px !important;
+}
+
+/* ========================================================
+   ESTILOS DOS ELEMENTOS (Minimalista e Elegante)
+   ======================================================== */
+
+/* Título e Textos */
+.login-box-msg {
+    color: #1a365d; /* Azul escuro elegante, mantendo a paleta */
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding-bottom: 20px;
+}
+
+/* Ajuste da logo na tela de login */
+.login-logo {
+    margin-bottom: 30px;
+}
 .login-logo img {
-    max-width: 250px !important; /* Altere este valor para ficar do tamanho que desejar */
+    max-width: 250px !important;
     height: auto !important;
+    filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1)); 
+}
+
+/* Inputs minimalistas */
+.form-control {
+    background: rgba(255, 255, 255, 0.7) !important;
+    border: 1px solid rgba(255, 255, 255, 0.9) !important;
+    border-radius: 8px !important;
+    color: #333 !important;
+    height: 48px;
+    padding-left: 15px;
+    font-size: 0.95rem;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02) !important;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    background: #fff !important;
+    border-color: #0056b3 !important;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2) !important;
+}
+
+.input-group-text {
+    background: rgba(255, 255, 255, 0.7) !important;
+    border: 1px solid rgba(255, 255, 255, 0.9) !important;
+    border-radius: 8px !important;
+    border-left: none !important;
+    color: #0056b3 !important;
+}
+
+/* Esconder o checkbox original e estilizar um mais moderno (opcional, do adminLTE) */
+.icheck-primary label {
+    color: #4a5568;
+    font-weight: 500;
+}
+
+/* Botão de Login (Azul do Sistema Metropolitano) */
+.btn-primary {
+    background: linear-gradient(135deg, #0062cc, #004a99) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 15px rgba(0, 98, 204, 0.3) !important;
+    font-weight: 600 !important;
+    padding: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 98, 204, 0.4) !important;
+    background: linear-gradient(135deg, #0069d9, #0056b3) !important;
+}
+
+/* ========================================================
+   RESPONSIVIDADE (Telas menores)
+   ======================================================== */
+@media (max-width: 768px) {
+    body.login-page {
+        justify-content: center !important;
+    }
+    body.login-page::after {
+        width: 100%;
+        min-width: 100%;
+        background: rgba(255, 255, 255, 0.65); /* Fica mais opaco em telas pequenas para leitura */
+    }
+    .login-box {
+        position: relative !important;
+        right: auto !important;
+        top: auto !important;
+        transform: none !important;
+        margin: 0 auto !important;
+    }
 }
 
 /* Opcional: Ajuste do tamanho da logo no menu lateral de dentro do painel */
 .brand-link .brand-image {
-    max-height: 45px !important; /* Aumente ou diminua se precisar */
+    max-height: 45px !important; 
 }
