@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'pacientes',
     'multiselectfield',
-    ]
+    'rangefilter',
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

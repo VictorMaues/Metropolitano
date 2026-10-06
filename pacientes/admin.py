@@ -3,6 +3,8 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.http import HttpResponse
 import csv
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 from .models import Paciente
 
 @admin.register(Paciente)
@@ -102,19 +104,7 @@ class PacienteAdmin(admin.ModelAdmin):
 
     ####################################################################################################
 
-    list_filter = (
-        'risco',
-        'especialidade_primeiro_atendimento',
-    )
-
-    search_fields = (
-        'nome',
-        'numero_registro',
-    )
-
-    #date_hierarchy = 'data_agendamento'
-
-    actions = ['exportar_csv']
+    actions = ['exportar_csv', 'exportar_pdf']
 
     @admin.display(description='Classificação de Risco')
     def colored_risco(self, obj):
@@ -158,4 +148,17 @@ class PacienteAdmin(admin.ModelAdmin):
                 paciente.hora_primeiro_atendimento
             ])
 
+        return response
+
+    @admin.action(description="Exportar Pacientes Selecionados para PDF")
+    def exportar_pdf(self, request, queryset):
+        template_path = 'pacientes/pdf_pacientes.html'
+        context = {'pacientes': queryset}
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="relatorio_pacientes.pdf"'
+        template = get_template(template_path)
+        html = template.render(context)
+        pisa_status = pisa.CreatePDF(html, dest=response)
+        if pisa_status.err:
+            return HttpResponse('Tivemos alguns erros <pre>' + html + '</pre>')
         return response

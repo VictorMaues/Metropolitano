@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        @page {
+            size: a4 portrait;
+            margin: 2cm;
+            @frame footer {
+                -pdf-frame-content: footerContent;
+                bottom: 1cm;
+                margin-left: 1cm;
+                margin-right: 1cm;
+                height: 1cm;
+            }
+        }
+        body { font-family: Helvetica, Arial, sans-serif; font-size: 12px; }
+        h1 { color: #0056b3; text-align: center; }
+        .info { text-align: center; font-size: 10px; color: #666; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #dddddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; color: #333; }
+        .risco-vermelho { color: #e53e3e; font-weight: bold; }
+        .risco-laranja { color: #dd6b20; font-weight: bold; }
+        .risco-amarelo { color: #d69e2e; font-weight: bold; }
+        .risco-verde { color: #38a169; font-weight: bold; }
+        .risco-azul { color: #3182ce; font-weight: bold; }
+        .risco-branco { color: #718096; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Relatório de Atendimentos</h1>
+    <div class="info">Hospital Metropolitano - Gerado em {% now "d/m/Y H:i" %}</div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Data Entrada</th>
+                <th>Registro (RH)</th>
+                <th>Nome do Paciente</th>
+                <th>Risco</th>
+                <th>Especialidade FAU</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in pacientes %}
+            <tr>
+                <td>{{ p.data_agendamento|date:"d/m/Y H:i" }}</td>
+                <td>{{ p.numero_registro }}</td>
+                <td>{{ p.nome }}</td>
+                <td class="risco-{{ p.risco|lower }}">{{ p.risco }}</td>
+                <td>{{ p.get_especialidade_primeiro_atendimento_display|default:"-" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center;">Nenhum paciente selecionado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div id="footerContent" style="text-align: center; font-size: 10px; color: #999;">
+        Página <pdf:pagenumber> de <pdf:pagecount>
+    </div>
+</body>
+</html>
