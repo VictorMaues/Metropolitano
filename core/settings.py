@@ -139,6 +139,12 @@ JAZZMIN_SETTINGS = {
 
     'site_logo': 'pacientes/img/logo.jpg',
 
+    # Links no menu superior (Header)
+    'topmenu_links': [
+        # Colocando o nome como um link que leva para a página inicial
+        {'name': 'Hospital Metropolitano', 'url': 'admin:index', 'permissions': []},
+    ],
+
     'login_logo': 'pacientes/img/logo.jpg',
     
     'custom_css': 'pacientes/css/custom.css',
