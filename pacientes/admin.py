@@ -104,6 +104,18 @@ class PacienteAdmin(admin.ModelAdmin):
 
     ####################################################################################################
 
+    list_filter = (
+        'risco',
+        'especialidade_primeiro_atendimento',
+    )
+
+    radio_fields = {'risco': admin.HORIZONTAL}
+
+    search_fields = (
+        'nome',
+        'numero_registro',
+    )
+
     actions = ['exportar_csv', 'exportar_pdf']
 
     @admin.display(description='Classificação de Risco')
