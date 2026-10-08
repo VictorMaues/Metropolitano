@@ -251,3 +251,51 @@ body.login-page::after {
     max-height: 45px !important; 
 }
 
+/* ========================================================
+   ALINHAMENTO E PADRONIZAÇÃO DA BUSCA, BOTÃO E FILTROS
+   ======================================================== */
+
+/* Contêiner da busca e filtros em linha */
+#changelist-search,
+#toolbar form {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+}
+
+/* Altura padronizada (38px) e alinhamento idêntico para todos os elementos */
+#changelist-search select,
+#changelist-search input[type="text"],
+#changelist-search input[type="submit"],
+#toolbar select,
+#toolbar input[name="q"],
+#toolbar input[type="submit"],
+#toolbar .btn {
+    height: 35px !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+}
+
+/* Campo de texto de busca (Input) */
+#changelist-search input[type="text"],
+#toolbar input[name="q"] {
+    width: 280px !important;
+    font-size: 0.95rem !important;
+    border-radius: 6px !important;
+    padding: 0 12px !important;
+}
+
+/* Botão "PESQUISAR" */
+#changelist-search input[type="submit"],
+#toolbar input[type="submit"],
+#toolbar .btn-primary {
+    padding: 0 20px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+}
