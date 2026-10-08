@@ -299,3 +299,45 @@ body.login-page::after {
     justify-content: center !important;
     line-height: 1 !important;
 }
+
+/* ========================================================
+   CORES DOS BOTÕES "ADICIONAR" E "MODIFICAR" (DASHBOARD)
+   ======================================================== */
+
+/* Botão "Adicionar" (Azul Metropolitano) */
+.addlink,
+.model-add,
+.btn-success {
+    background: linear-gradient(135deg, #0062cc, #004a99) !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(0, 98, 204, 0.2) !important;
+    transition: all 0.2s ease !important;
+}
+
+.addlink:hover,
+.model-add:hover,
+.btn-success:hover {
+    background: linear-gradient(135deg, #0069d9, #0056b3) !important;
+    box-shadow: 0 4px 10px rgba(0, 98, 204, 0.3) !important;
+}
+
+/* Botão "Modificar" (Cinza Elegante / Neutro) */
+.changelink,
+.model-change,
+.btn-info,
+.btn-warning {
+    background: #6c757d !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(108, 117, 125, 0.2) !important;
+    transition: all 0.2s ease !important;
+}
+
+.changelink:hover,
+.model-change:hover,
+.btn-info:hover,
+.btn-warning:hover {
+    background: #5a6268 !important;
+    box-shadow: 0 4px 10px rgba(108, 117, 125, 0.3) !important;
+}
