@@ -341,3 +341,13 @@ body.login-page::after {
     background: #5a6268 !important;
     box-shadow: 0 4px 10px rgba(108, 117, 125, 0.3) !important;
 }
+
+/* Transição suave ao carregar novas páginas */
+@keyframes fadeInPage {
+    from { opacity: 0.85; }
+    to { opacity: 1; }
+}
+
+body {
+    animation: fadeInPage 0.25s ease-in-out;
+}
