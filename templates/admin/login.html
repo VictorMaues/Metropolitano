@@ -1,10 +1,11 @@
 {% extends "registration/base.html" %}
 
-{% load i18n jazzmin %}
+{% load i18n static jazzmin %}
 {% get_jazzmin_settings request as jazzmin_settings %}
 {% get_jazzmin_ui_tweaks as jazzmin_ui %}
 
 {% block content %}
+    <!-- Painel do Lado Esquerdo (Logo + Título + Apresentação) -->
     <p class="login-box-msg">{{ jazzmin_settings.welcome_sign }}</p>
     <form action="{{ app_path }}" method="post">
         {% csrf_token %}

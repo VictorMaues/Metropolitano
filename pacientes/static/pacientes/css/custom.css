@@ -149,6 +149,9 @@ body.login-page::after {
    RESPONSIVIDADE (Telas menores)
    ======================================================== */
 @media (max-width: 768px) {
+    .login-left-brand {
+        display: none !important;
+    }
     body.login-page {
         justify-content: center !important;
     }
@@ -166,7 +169,85 @@ body.login-page::after {
     }
 }
 
+/* ========================================================
+   PAINEL DE BRANDING / APRESENTAÇÃO DO LADO ESQUERDO
+   ======================================================== */
+.login-left-brand {
+    position: fixed !important;
+    top: 0 !important;
+    left: 4vw !important;
+    width: 42vw !important;
+    max-width: 520px !important;
+    height: 100vh !important;
+    padding: 50px 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    z-index: 10 !important;
+    pointer-events: none !important;
+    box-sizing: border-box !important;
+}
+
+.login-left-brand * {
+    pointer-events: auto !important;
+}
+
+.left-brand-top {
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+}
+
+.left-logo-img {
+    height: 50px !important;
+    width: 50px !important;
+    min-width: 50px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+    border: 2px solid rgba(255, 255, 255, 0.9) !important;
+}
+
+.left-logo-text {
+    font-size: 1.3rem !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    letter-spacing: 0.5px !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7) !important;
+    white-space: nowrap !important;
+}
+
+.left-brand-center {
+    width: 100% !important;
+}
+
+.left-brand-center h1 {
+    font-size: 2.5rem !important;
+    font-weight: 800 !important;
+    line-height: 1.25 !important;
+    margin-bottom: 18px !important;
+    color: #ffffff !important;
+    text-shadow: 0 4px 18px rgba(0, 0, 0, 0.7) !important;
+    word-wrap: break-word !important;
+}
+
+.left-brand-center p {
+    font-size: 1.1rem !important;
+    font-weight: 400 !important;
+    line-height: 1.6 !important;
+    color: rgba(255, 255, 255, 0.92) !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7) !important;
+}
+
+.left-brand-bottom p {
+    font-size: 0.85rem !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7) !important;
+    margin: 0 !important;
+}
+
 /* Opcional: Ajuste do tamanho da logo no menu lateral de dentro do painel */
 .brand-link .brand-image {
     max-height: 45px !important; 
 }
+
