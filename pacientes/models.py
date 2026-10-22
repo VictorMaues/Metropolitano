@@ -115,3 +115,20 @@ class Paciente(models.Model):
     )    
     def __str__(self):
         return f'{self.nome} ({self.numero_registro})'
+
+class Senha_de_atendimento(models.Model):
+    STATUS_CHOICES = [
+        ('AGUARDANDO', 'aguardando'),
+        ('ATENDENDO', 'atendendo'),
+        ('CONCLUIDO', 'concluido'),
+        ('CANCELADO', 'cancelado')
+    ]
+    numero = models.CharField(max_length = 10 )
+    guiche = models.CharField(max_length = 10 )
+    status = models.CharField(max_length = 10, choices=STATUS_CHOICES, default="AGUARDANDO")
+    criando_em = models.DateTimeField(default=timezone.now)
+    chamado_em = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Senha {self.numero} - {self.status}"       
+
