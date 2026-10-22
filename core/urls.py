@@ -18,8 +18,6 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    #path('admin/', admin.site.urls),
-    #depois eu troco a URL, coloquei a tela de longin do admin como url padrão
-    path('', admin.site.urls),
-    #path('', include('pacientes.urls')),
+    path('admin/', admin.site.urls),
+    path('', include('pacientes.urls')),
 ]
