@@ -10,3 +10,7 @@ def pagina_inicial(request):
 def view_painel_tv(request):
     """View que exibe o painel de TV."""
     return render(request, 'pacientes/Painel_Tv.html') 
+
+def view_bemvindo(request):
+    """view que exibe a pagina de Bem Vindo. """
+    return render (request, 'pacientes/BemVindo.html')
