@@ -1,0 +1,21 @@
+# Ambientes Virtuais
+venv/
+.venv/
+env/
+ENV/
+
+# Python / Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Banco de dados local (se desejar manter db fora do git)
+# db.sqlite3
+
+# Arquivos de IDE / Sistema Operacional
+.vscode/
+.idea/
+.DS_Store
+*.log
+

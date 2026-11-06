@@ -1,0 +1,13 @@
+# Framework Principal
+Django>=5.0,<6.0
+
+# Tema e Interface do Django Admin
+django-jazzmin>=3.0.0
+
+# Extensões e Campos do Django
+django-multiselectfield>=0.1.13
+django-rangefilter>=0.9.0
+
+# Geração e Exportação de relatórios em PDF
+xhtml2pdf>=0.2.16
+

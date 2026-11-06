@@ -14,38 +14,59 @@ Sistema de gerenciamento de pacientes e fluxos hospitalares, desenvolvido com o 
 ## Tecnologias
 
 - Python
-- Django 5.2
+- Django
 - SQLite (Banco de dados padrão)
 - [Django Jazzmin](https://github.com/farridav/django-jazzmin) (Painel Administrativo)
 - [Django MultiSelectField](https://github.com/goinnn/django-multiselectfield)
-- Django Rangefilter
+- [Django Rangefilter](https://github.com/silviogutierrez/django-rangefilter)
+- [xhtml2pdf](https://github.com/xhtml2pdf/xhtml2pdf) (Exportação de relatórios em PDF)
 
 ## Como executar o projeto localmente
 
-1. **Clone o repositório ou acesse a pasta do projeto.**
-
-2. **Ative o ambiente virtual:**
+1. **Acesse a pasta do projeto:**
    ```bash
-   source venv/bin/activate
+   cd Metropolitano
    ```
 
-3. **Realize as migrações do banco de dados:**
+2. **Crie o ambiente virtual (venv):**
+   ```bash
+   python -m venv venv
+   ```
+
+3. **Ative o ambiente virtual:**
+   - No Linux/macOS:
+     ```bash
+     source venv/bin/activate
+     ```
+   - No Windows (PowerShell):
+     ```powershell
+     .\venv\Scripts\Activate.ps1
+     ```
+
+4. **Instale as dependências:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+5. **Realize as migrações do banco de dados:**
    ```bash
    python manage.py migrate
    ```
 
-4. **Crie um superusuário** para acessar o painel administrativo:
+6. **Crie um superusuário** para acessar o painel administrativo (se necessário):
    ```bash
    python manage.py createsuperuser
    ```
 
-5. **Inicie o servidor de desenvolvimento:**
+7. **Inicie o servidor de desenvolvimento:**
    ```bash
    python manage.py runserver
    ```
 
-6. **Acesse o painel:**
-   Abra seu navegador e acesse `http://127.0.0.1:8000/admin`. Faça o login com as credenciais do superusuário recém-criado.
+8. **Acesse o sistema:**
+   - Painel Administrativo: `http://127.0.0.1:8000/admin`
+   - Painel de TV: `http://127.0.0.1:8000/painel/`
+   - Página Inicial: `http://127.0.0.1:8000/`
 
 ## Estrutura do Projeto
 
