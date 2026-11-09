@@ -1,13 +1,65 @@
 {% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Painel de Atendimento</title>
-    <link rel="stylesheet" href="{% static 'pacientes/css/painel.css' %}">
-</head>
-<body>
-    <h1> class</h1>
-    <h2></h2>
-</body>
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel de Atendimento - Hospital Metropolitano</title>
+    <link rel="stylesheet" href="{% static 'pacientes/senhas/css/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'pacientes/senhas/css/painel_tv.css' %}" />
+  </head>
+  <body class="painel-tv">
+    <div id="audio-unlocker">
+      <h2>Painel de Senhas - Hospital Metropolitano</h2>
+      <button type="button" id="btn-start-panel">Iniciar Painel (Ativar Áudio)</button>
+      <p>O clique é necessário para liberar o som no navegador.</p>
+    </div>
+
+    <div class="panel-header">
+      <div class="brand">
+        <img class="brand-logo" src="{% static 'pacientes/img/logo.jpg' %}" alt="Logo Hospital Metropolitano" />
+        <span class="brand-name">Hospital Metropolitano</span>
+      </div>
+      <div class="clock-area">
+        <div class="badge badge-normal" id="clock">00:00:00</div>
+        <div class="day-of-week" id="day-of-week"></div>
+      </div>
+    </div>
+
+    <main class="panel-container">
+      <section class="main-call" aria-live="assertive" aria-atomic="true">
+        <label class="audio-config">
+          <input type="checkbox" id="enable-sound" checked />
+          <span>Habilitar chamada por voz (Áudio)</span>
+        </label>
+
+        <div class="call-title">Senha Chamada</div>
+        <div class="current-code" id="current-code">---</div>
+
+        <div class="current-details">
+          <div class="current-service" id="current-service">Aguardando início...</div>
+          <div>
+            <span class="current-desk" id="current-desk">GUICHÊ --</span>
+          </div>
+        </div>
+
+        <div class="connection-status" id="connection-status">Sem conexão com o servidor</div>
+      </section>
+
+      <aside class="history-panel">
+        <div class="history-title">Últimas Chamadas</div>
+        <div class="history-list" id="history-list" aria-live="polite">
+          <div class="empty-state">Sem chamadas anteriores.</div>
+        </div>
+      </aside>
+    </main>
+
+    <script>
+      window.PAINEL_CONFIG = {
+        urlEstado: "{% url 'api_estado_painel' %}",
+      };
+    </script>
+    <script src="{% static 'pacientes/senhas/js/senhas.js' %}"></script>
+    <script src="{% static 'pacientes/senhas/js/painel_tv.js' %}"></script>
+  </body>
 </html>

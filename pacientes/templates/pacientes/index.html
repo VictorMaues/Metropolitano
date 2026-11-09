@@ -1,0 +1,160 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portal do Sistema de Senhas - Hospital Metropolitano</title>
+    <link rel="stylesheet" href="{% static 'pacientes/senhas/css/base.css' %}" />
+    <style>
+      .portal-hero {
+        text-align: center;
+        padding: 2.5rem 1.5rem;
+        background: radial-gradient(
+          circle at top,
+          var(--primary-light) 0%,
+          transparent 70%
+        );
+        border-radius: var(--radius-lg);
+        margin-bottom: 3rem;
+        border: 1px solid var(--border-color);
+        background-color: var(--bg-secondary);
+      }
+      .portal-hero h1 {
+        font-size: 2.75rem;
+        color: var(--text-primary);
+        margin-bottom: 0.75rem;
+      }
+      .portal-hero p {
+        font-size: 1.15rem;
+        color: var(--text-secondary);
+        max-width: 650px;
+        margin: 0 auto;
+      }
+      .launch-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+      }
+      .launch-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 2.5rem 2rem;
+        text-align: center;
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+      }
+      .launch-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-xl);
+        border-color: var(--primary);
+      }
+      .icon-wrapper {
+        background: var(--primary-light);
+        color: var(--primary);
+        width: 4.5rem;
+        height: 4.5rem;
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.5rem;
+      }
+      .icon-wrapper svg {
+        width: 2.25rem;
+        height: 2.25rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <img
+          class="brand-logo"
+          src="{% static 'pacientes/img/logo.jpg' %}"
+          alt="Logo Hospital Metropolitano"
+        />
+        <span class="brand-name">Hospital Metropolitano</span>
+      </div>
+      <div>
+        <a href="{% url 'pagina_inicial' %}" class="btn btn-secondary" style="font-size: 0.9rem;">
+          Voltar ao Início
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <div class="portal-hero">
+        <h1>Gestão de Atendimento & Senhas</h1>
+        <p>
+          Módulo integrado de emissão, gerenciamento de filas e chamada de pacientes em tempo real.
+        </p>
+      </div>
+
+      <div class="launch-grid">
+        <!-- Card 1: Totem -->
+        <div class="launch-card">
+          <div style="display: flex; flex-direction: column; align-items: center">
+            <div class="icon-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
+              </svg>
+            </div>
+            <h2>1. Totem de Senhas</h2>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 0.5rem;">
+              Interface touch para autoatendimento do paciente: escolha de serviço e emissão de senha impressa com QR Code.
+            </p>
+          </div>
+          <a href="{% url 'Totem' %}" target="_blank" class="btn btn-primary" style="width: 100%">
+            Abrir Totem
+          </a>
+        </div>
+
+        <!-- Card 2: TV Panel -->
+        <div class="launch-card">
+          <div style="display: flex; flex-direction: column; align-items: center">
+            <div class="icon-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 20.25h12m-7.5-3v3m3-3v3m-10.125-3h17.25c.621 0 1.125-.504 1.125-1.125V4.875c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125Z" />
+              </svg>
+            </div>
+            <h2>2. Painel TV (Sala de Espera)</h2>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 0.5rem;">
+              Exibição pública contínua com alerta sonoro (ding-dong), histórico de chamadas e síntese de voz (TTS).
+            </p>
+          </div>
+          <a href="{% url 'Painel_Tv' %}" target="_blank" class="btn btn-primary" style="width: 100%">
+            Abrir Painel TV
+          </a>
+        </div>
+
+        <!-- Card 3: Operator -->
+        <div class="launch-card">
+          <div style="display: flex; flex-direction: column; align-items: center">
+            <div class="icon-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25" />
+              </svg>
+            </div>
+            <h2>3. Painel do Operador</h2>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 0.5rem;">
+              Interface para guichês e consultórios: chamada por prioridade (ciclo inteligente), rechamada e gestão da fila.
+            </p>
+          </div>
+          <a href="{% url 'operador_senhas' %}" target="_blank" class="btn btn-primary" style="width: 100%">
+            Abrir Operador
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <footer>Hospital Metropolitano &copy; 2026 · Sistema Integrado</footer>
+  </body>
+</html>
+

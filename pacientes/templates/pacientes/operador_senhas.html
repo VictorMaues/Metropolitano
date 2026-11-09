@@ -1,0 +1,119 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel do Operador - Hospital Metropolitano</title>
+    <link rel="stylesheet" href="{% static 'pacientes/senhas/css/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'pacientes/senhas/css/operador.css' %}" />
+  </head>
+  <body>
+    {% csrf_token %}
+    <header>
+      <div class="brand">
+        <img class="brand-logo" src="{% static 'pacientes/img/logo.jpg' %}" alt="Logo Hospital Metropolitano" />
+        <span class="brand-name">Painel do Operador</span>
+      </div>
+      <div class="header-actions">
+        <div class="desk-selector">
+          <label for="desk-select">Guichê:</label>
+          <select id="desk-select">
+            {% for g in guiches %}
+            <option value="{{ g }}">Guichê {{ g }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="button" class="reset-btn" id="btn-encerrar">Encerrar Expediente</button>
+        <div class="user-info">
+          {{ request.user.get_full_name|default:request.user.username }} ·
+          <a href="{% url 'admin:index' %}">Admin</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="operator-container">
+        <!-- Coluna esquerda: atendimento atual e contadores -->
+        <div>
+          <div class="current-serving">
+            <h2>Atendimento Atual</h2>
+            <div class="active-code" id="active-code">---</div>
+            <div class="active-info" id="active-info">Nenhuma senha em atendimento</div>
+            <button type="button" class="btn btn-primary" id="btn-recall">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" /></svg>
+              Chamar Novamente
+            </button>
+          </div>
+
+          <div class="card" style="padding: 1.5rem">
+            <h2 style="font-size: 1.1rem; margin-bottom: 1rem">Filas Disponíveis</h2>
+            <div class="counters">
+              {% for valor, rotulo in servicos %}
+              <div class="counter-row{% if not forloop.first %} group-start{% endif %}">
+                <span>{{ rotulo }} · Comum:</span>
+                <strong id="count-{{ valor }}-NORMAL">0</strong>
+              </div>
+              <div class="counter-row">
+                <span>{{ rotulo }} · Preferencial:</span>
+                <strong class="prio-PREFERENCIAL" id="count-{{ valor }}-PREFERENCIAL">0</strong>
+              </div>
+              <div class="counter-row">
+                <span>{{ rotulo }} · Superprioridade:</span>
+                <strong class="prio-SUPER" id="count-{{ valor }}-SUPER">0</strong>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Coluna direita: ações e filas -->
+        <div>
+          <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem">Ações de Chamada</h2>
+
+          <div class="action-buttons">
+            <button type="button" class="btn btn-next-all" data-chamar-proxima="any">
+              Próximo Geral (Pref. Primeiro)
+            </button>
+            {% for valor, rotulo in servicos %}
+            <button type="button" class="btn btn-secondary" data-chamar-proxima="{{ valor }}">
+              Próximo · {{ rotulo }}
+            </button>
+            {% endfor %}
+          </div>
+          <div class="operator-message" id="operator-message" role="alert"></div>
+
+          <div class="tab-nav">
+            <button type="button" class="tab-btn active" data-tab="all">Todas as Senhas</button>
+            {% for valor, rotulo in servicos %}
+            <button type="button" class="tab-btn" data-tab="{{ valor }}">{{ rotulo }}</button>
+            {% endfor %}
+            <button type="button" class="tab-btn" data-tab="history">Histórico</button>
+          </div>
+
+          <div class="queue-section">
+            <h3 id="queue-title">Fila de Espera</h3>
+            <div class="queue-list" id="queue-list-container">
+              <div class="empty-state">Carregando...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>Hospital Metropolitano · Painel de Senhas</footer>
+
+    <script>
+      window.OPERADOR_CONFIG = {
+        urlEstado: "{% url 'api_estado_operador' %}",
+        urlChamarProxima: "{% url 'api_chamar_proxima' %}",
+        urlChamarSenha: "{% url 'api_chamar_senha' 0 %}",
+        urlEncerrar: "{% url 'api_encerrar_expediente' %}",
+        urlLogin: "{% url 'admin:login' %}?next={{ request.path|urlencode }}",
+      };
+    </script>
+    <script src="{% static 'pacientes/senhas/js/senhas.js' %}"></script>
+    <script src="{% static 'pacientes/senhas/js/operador.js' %}"></script>
+  </body>
+</html>
+

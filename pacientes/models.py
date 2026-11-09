@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.utils import timezone
 from multiselectfield import MultiSelectField
@@ -117,18 +119,71 @@ class Paciente(models.Model):
         return f'{self.nome} ({self.numero_registro})'
 
 class Senha_de_atendimento(models.Model):
+    """Senha emitida no totem e chamada pelo operador no painel de TV.
+
+    Portado do projeto Painel-de-senhas (Node.js), agora persistido no banco.
+    """
+
     STATUS_CHOICES = [
-        ('AGUARDANDO', 'aguardando'),
-        ('ATENDENDO', 'atendendo'),
-        ('CONCLUIDO', 'concluido'),
-        ('CANCELADO', 'cancelado')
+        ('AGUARDANDO', 'Aguardando'),
+        ('ATENDENDO', 'Atendendo'),
+        ('CONCLUIDO', 'Concluído'),
+        ('CANCELADO', 'Cancelado'),
     ]
-    numero = models.CharField(max_length = 10 )
-    guiche = models.CharField(max_length = 10 )
-    status = models.CharField(max_length = 10, choices=STATUS_CHOICES, default="AGUARDANDO")
-    criando_em = models.DateTimeField(default=timezone.now)
-    chamado_em = models.DateTimeField(blank=True, null=True)
+
+    # Serviços oferecidos no totem. Para adicionar/alterar um serviço, edite
+    # apenas esta lista e PREFIXO_SERVICO (a letra inicial do código da senha).
+    SERVICOS = [
+        ('RECEPCAO', 'Recepção e Cadastro'),
+        ('EXAMES', 'Exames e Resultados'),
+        ('INFORMACOES', 'Informações e Visitas'),
+    ]
+    PREFIXO_SERVICO = {
+        'RECEPCAO': 'R',
+        'EXAMES': 'E',
+        'INFORMACOES': 'I',
+    }
+
+    PRIORIDADES = [
+        ('NORMAL', 'Comum'),
+        ('PREFERENCIAL', 'Preferencial'),
+        ('SUPER', 'Superprioridade'),
+    ]
+    PREFIXO_PRIORIDADE = {
+        'NORMAL': 'N',
+        'PREFERENCIAL': 'P',
+        'SUPER': 'S',
+    }
+
+    # Ordem de chamada do botão "Próximo": 2 superprioridades, 2 preferenciais,
+    # 1 comum (S, S, P, P, C) — mesma regra do projeto original.
+    CICLO_CHAMADA = ['SUPER', 'SUPER', 'PREFERENCIAL', 'PREFERENCIAL', 'NORMAL']
+
+    servico = models.CharField('Serviço', max_length=20, choices=SERVICOS, default='RECEPCAO')
+    prioridade = models.CharField('Prioridade', max_length=20, choices=PRIORIDADES, default='NORMAL')
+    sequencia = models.PositiveIntegerField('Sequência do dia', default=0)
+    numero = models.CharField('Senha', max_length=10)
+    guiche = models.CharField('Guichê', max_length=10, blank=True, default='')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="AGUARDANDO")
+    data_emissao = models.DateField('Data de emissão', default=timezone.localdate, db_index=True)
+    criando_em = models.DateTimeField('Emitida em', default=timezone.now)
+    chamado_em = models.DateTimeField('Primeira chamada em', blank=True, null=True)
+    ultima_chamada_em = models.DateTimeField('Última chamada em', blank=True, null=True)
+    finalizado_em = models.DateTimeField('Finalizada em', blank=True, null=True)
+    posicao_ciclo = models.PositiveSmallIntegerField(blank=True, null=True, editable=False)
+    token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+
+    class Meta:
+        verbose_name = 'Senha de Atendimento'
+        verbose_name_plural = 'Senhas de Atendimento'
+        ordering = ['-criando_em']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['data_emissao', 'servico', 'prioridade', 'sequencia'],
+                name='senha_unica_por_dia',
+            ),
+        ]
 
     def __str__(self):
-        return f"Senha {self.numero} - {self.status}"       
+        return f"Senha {self.numero} - {self.get_status_display()}"
 
