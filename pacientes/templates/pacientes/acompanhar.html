@@ -1,0 +1,282 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Acompanhar Senha - Hospital Metropolitano</title>
+    <link rel="stylesheet" href="{% static 'pacientes/senhas/css/base.css' %}" />
+    <style>
+      body {
+        background-color: var(--bg-primary);
+        justify-content: center;
+        align-items: center;
+        padding: 1.5rem;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .status-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem 2rem;
+        width: 100%;
+        max-width: 450px;
+        text-align: center;
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        overflow: hidden;
+      }
+      .brand-mini {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1rem;
+      }
+      .brand-mini img {
+        height: 4.5rem;
+        width: auto;
+        border-radius: var(--radius-sm);
+        background: #ffffff;
+        padding: 4px;
+        border: 1px solid var(--border-color);
+      }
+      .ticket-code-display {
+        font-size: 3.5rem;
+        font-weight: 900;
+        color: var(--primary);
+        letter-spacing: -1px;
+        margin: 0.75rem 0;
+      }
+      .queue-status-text {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+      }
+      .position-counter {
+        background: var(--primary-light);
+        color: var(--primary);
+        font-size: 3.5rem;
+        font-weight: 800;
+        width: 6.5rem;
+        height: 6.5rem;
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 1.25rem auto;
+        box-shadow: var(--shadow-sm);
+      }
+      .turn-alert-active {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: var(--success);
+        color: white;
+        z-index: 9999;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        text-align: center;
+        animation: flash-green 1.5s infinite;
+      }
+      @keyframes flash-green {
+        0%, 100% { background-color: var(--success); }
+        50% { background-color: #059669; }
+      }
+      .turn-title {
+        font-size: 2.75rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 1rem;
+      }
+      .turn-desk {
+        font-size: 4rem;
+        font-weight: 900;
+        background: rgba(255, 255, 255, 0.2);
+        border: 3px solid white;
+        padding: 0.75rem 2.5rem;
+        border-radius: var(--radius-md);
+        margin: 1.5rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Card de Acompanhamento no celular -->
+    <div class="status-card" id="tracking-card">
+      <div class="brand-mini">
+        <img
+          src="{% static 'pacientes/img/logo.jpg' %}"
+          alt="Logo Hospital Metropolitano"
+        />
+      </div>
+      <h2
+        style="
+          font-size: 1.1rem;
+          color: var(--text-secondary);
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        "
+      >
+        Sua Senha
+      </h2>
+      <div class="ticket-code-display" id="ticket-code">{{ senha.numero }}</div>
+      <div id="service-badge-container" style="margin-bottom: 1.5rem">
+        <span class="badge badge-normal" id="ticket-service-label">
+          {{ senha.get_servico_display }}
+        </span>
+        <span class="badge {{ senha.prioridade|yesno:'badge-priority,badge-normal' }}" id="ticket-type-label">
+          {{ senha.get_prioridade_display }}
+        </span>
+      </div>
+
+      <div
+        style="
+          border-top: 1px solid var(--border-color);
+          padding-top: 1.5rem;
+          margin-top: 1.5rem;
+        "
+      >
+        <div class="queue-status-text" id="status-message">
+          {% if senha.status == 'AGUARDANDO' %}
+            Aguardando na Fila...
+          {% elif senha.status == 'ATENDENDO' %}
+            Chamada no Guichê {{ senha.guiche }}!
+          {% elif senha.status == 'CONCLUIDO' %}
+            Atendimento Concluído.
+          {% else %}
+            Senha Cancelada.
+          {% endif %}
+        </div>
+        <div id="position-area" {% if senha.status != 'AGUARDANDO' %}style="display: none;"{% endif %}>
+          <p style="color: var(--text-secondary); font-size: 0.95rem">
+            Pessoas na sua frente:
+          </p>
+          <div class="position-counter" id="people-ahead">--</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tela de Alerta (Sua Vez!) -->
+    <div class="turn-alert-active" id="turn-alert">
+      <div class="turn-title">Sua Vez!</div>
+      <div style="font-size: 2rem; font-weight: 700">
+        Senha <span id="alert-code">{{ senha.numero }}</span>
+      </div>
+      <p style="font-size: 1.25rem; margin-top: 1rem; max-width: 400px">
+        Por favor, dirija-se imediatamente ao guichê:
+      </p>
+      <div class="turn-desk" id="alert-desk">GUICHÊ {{ senha.guiche|default:"--" }}</div>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        onclick="dismissAlert()"
+        style="
+          background: white;
+          color: var(--success);
+          font-size: 1.2rem;
+          padding: 1rem 2.5rem;
+          border-radius: var(--radius-md);
+          font-weight: bold;
+          margin-top: 2rem;
+          cursor: pointer;
+        "
+      >
+        Entendido
+      </button>
+    </div>
+
+    <script>
+      window.ACOMPANHAR_CONFIG = {
+        token: "{{ senha.token }}",
+        urlApi: "{% url 'api_acompanhar' senha.token %}"
+      };
+    </script>
+    <script src="{% static 'pacientes/senhas/js/senhas.js' %}"></script>
+    <script>
+      (() => {
+        const { urlApi } = window.ACOMPANHAR_CONFIG;
+        const POLL_MS = 3000;
+        let audioContext = null;
+
+        function playBeep() {
+          try {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            audioContext = audioContext || new Ctx();
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            osc.frequency.setValueAtTime(880, audioContext.currentTime);
+            gain.gain.setValueAtTime(0, audioContext.currentTime);
+            gain.gain.linearRampToValueAtTime(0.4, audioContext.currentTime + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.8);
+            osc.start(audioContext.currentTime);
+            osc.stop(audioContext.currentTime + 0.8);
+          } catch (e) {
+            console.warn("Áudio não pôde ser reproduzido:", e);
+          }
+        }
+
+        function triggerVibration() {
+          if (navigator.vibrate) {
+            navigator.vibrate([300, 150, 300, 150, 500]);
+          }
+        }
+
+        window.dismissAlert = function() {
+          document.getElementById("turn-alert").style.display = "none";
+        };
+
+        async function verificarStatus() {
+          try {
+            const data = await Senhas.get(urlApi);
+            document.getElementById("ticket-code").textContent = data.codigo;
+            document.getElementById("alert-code").textContent = data.codigo;
+            document.getElementById("ticket-service-label").textContent = data.servico_label;
+            document.getElementById("ticket-type-label").textContent = data.prioridade_label;
+
+            const badgePrio = document.getElementById("ticket-type-label");
+            badgePrio.className = `badge ${Senhas.badgeClass(data.prioridade)}`;
+
+            const msgEl = document.getElementById("status-message");
+            const posArea = document.getElementById("position-area");
+            const alertEl = document.getElementById("turn-alert");
+
+            if (data.status === "ATENDENDO") {
+              msgEl.textContent = `Senha CHAMADA no Guichê ${data.guiche}!`;
+              posArea.style.display = "none";
+
+              if (alertEl.style.display !== "flex") {
+                alertEl.style.display = "flex";
+                document.getElementById("alert-desk").textContent = `GUICHÊ ${data.guiche}`;
+                playBeep();
+                triggerVibration();
+              }
+            } else if (data.status === "CONCLUIDO") {
+              msgEl.textContent = "Atendimento Concluído.";
+              posArea.style.display = "none";
+            } else if (data.status === "CANCELADO") {
+              msgEl.textContent = "Senha Cancelada.";
+              posArea.style.display = "none";
+            } else {
+              msgEl.textContent = "Aguardando na Fila...";
+              posArea.style.display = "block";
+              document.getElementById("people-ahead").textContent =
+                data.pessoas_na_frente !== null ? data.pessoas_na_frente : "--";
+            }
+          } catch (err) {
+            console.warn("Falha ao atualizar status da senha:", err);
+          }
+        }
+
+        verificarStatus();
+        Senhas.poll(verificarStatus, POLL_MS);
+      })();
+    </script>
+  </body>
+</html>
+

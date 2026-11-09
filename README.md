@@ -176,7 +176,11 @@ O servidor iniciará localmente no endereço `http://127.0.0.1:8000/`.
 | :--- | :--- | :--- |
 | `/admin/` | Painel de controle administrativo, auditoria e cadastros | Restrito (Login) |
 | `/` | Página inicial com listagem geral de pacientes | Público |
-| `/painel/` | Painel de visualização de TV para chamada de senhas | Público / Recepção |
+| `/senhas/` | Portal central de atalhos do sistema de senhas | Público |
+| `/totem/` | Totem de autoatendimento para emissão de senhas e QR Code | Público |
+| `/painel/` | Painel de TV para sala de espera (chamada por voz e sinal sonoro) | Público / Recepção |
+| `/operador/` | Mesa do operador para chamada de senhas por guichê | Restrito (Login) |
+| `/acompanhar/<token>/` | Acompanhamento da fila em tempo real no celular via QR Code | Público |
 | `/bemvindo/` | Portal de acolhimento do paciente | Público |
 
 ---
