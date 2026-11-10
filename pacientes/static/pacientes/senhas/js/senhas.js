@@ -37,11 +37,12 @@ const Senhas = (() => {
   const post = (url, body = {}) =>
     request(url, { method: "POST", body: JSON.stringify(body) });
 
-  /** Executa `fn` agora e a cada `ms` milissegundos, sem sobrepor chamadas. */
+  /** Executa `fn` agora e a cada `ms` milissegundos, pausando automaticamente em abas em segundo plano. */
   function poll(fn, ms) {
     let running = false;
     const tick = async () => {
       if (running) return;
+      if (document.hidden) return; // pausa requisições quando a aba não está visível
       running = true;
       try {
         await fn();
@@ -52,7 +53,11 @@ const Senhas = (() => {
       }
     };
     tick();
-    return setInterval(tick, ms);
+    const intervalId = setInterval(tick, ms);
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) tick();
+    });
+    return intervalId;
   }
 
   function startClock(clockId = "clock", dayId = "day-of-week") {

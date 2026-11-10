@@ -1,7 +1,7 @@
 /* Painel do Operador: chama/rechama senhas e acompanha a fila em tempo real. */
 (() => {
   const cfg = window.OPERADOR_CONFIG;
-  const POLL_MS = 2000;
+  const POLL_MS = 4000;
   const e = Senhas.escapeHtml;
 
   let activeTab = "all";

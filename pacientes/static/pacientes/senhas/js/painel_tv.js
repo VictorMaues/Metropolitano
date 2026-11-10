@@ -4,7 +4,7 @@
  */
 (() => {
   const { urlEstado } = window.PAINEL_CONFIG;
-  const POLL_MS = 2000;
+  const POLL_MS = 3000;
   const EXIBICAO_MS = 8000; // tempo de destaque de cada chamada (como no original)
 
   let ultimoTs = null; // carimbo da última chamada já anunciada
