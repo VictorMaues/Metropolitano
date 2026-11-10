@@ -276,7 +276,7 @@ def api_chamar_proxima(request):
     for _ in range(5):  # se outra mesa pegar a senha antes, tenta a seguinte
         senha, posicao = _proxima_do_ciclo(dados.get('escopo', 'any'))
         if senha is None:
-            return JsonResponse({'erro': 'Não há senhas aguardando nesta fila.'}, status=404)
+            return JsonResponse({'erro': 'Não há senhas aguardando nesta fila.'}, status=400)
         if _chamar(senha, guiche, posicao_ciclo=posicao):
             senha.refresh_from_db()
             return JsonResponse(_serializar(senha))
