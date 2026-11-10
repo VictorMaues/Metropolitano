@@ -1,0 +1,161 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hospital Metropolitano - Início</title>
+    <link rel="stylesheet" href="{% static 'pacientes/senhas/css/base.css' %}" />
+    <style>
+      .hero-section {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+      .hero-section h1 {
+        font-size: 2.25rem;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+      }
+      .hero-section p {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .actions-bar {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 1.5rem;
+      }
+      .patients-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+      }
+      .patients-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.25rem;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+      .patients-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+      }
+      .patients-table th,
+      .patients-table td {
+        padding: 0.85rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .patients-table th {
+        color: var(--text-secondary);
+        font-weight: 600;
+        background: var(--bg-primary);
+      }
+      .badge-risco {
+        display: inline-block;
+        padding: 0.25rem 0.65rem;
+        border-radius: var(--radius-full);
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+      }
+      .risco-Vermelho { background: #fee2e2; color: #dc2626; }
+      .risco-Laranja  { background: #ffedd5; color: #ea580c; }
+      .risco-Amarelo  { background: #fef9c3; color: #ca8a04; }
+      .risco-Verde    { background: #dcfce7; color: #16a34a; }
+      .risco-Azul     { background: #e0f2fe; color: #0284c7; }
+      .risco-Branco   { background: #f3f4f6; color: #4b5563; }
+      .empty-state {
+        text-align: center;
+        padding: 2.5rem 1rem;
+        color: var(--text-secondary);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <img class="brand-logo" src="{% static 'pacientes/img/logo.jpg' %}" alt="Logo Hospital Metropolitano" />
+        <span class="brand-name">Hospital Metropolitano</span>
+      </div>
+      <div>
+        <a href="{% url 'senhas_portal' %}" class="btn btn-primary" style="margin-right: 0.5rem;">
+          Portal de Senhas
+        </a>
+        <a href="{% url 'admin:index' %}" class="btn btn-secondary">
+          Painel Admin
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <div class="hero-section">
+        <h1>Gestão de Pacientes & Fluxo Hospitalar</h1>
+        <p>Acompanhamento de triagem, especialidades médicas e atendimento de urgência.</p>
+        <div class="actions-bar">
+          <a href="{% url 'senhas_portal' %}" class="btn btn-primary">Sistema de Senhas</a>
+          <a href="{% url 'Totem' %}" class="btn btn-secondary">Totem de Autoatendimento</a>
+          <a href="{% url 'Painel_Tv' %}" class="btn btn-secondary">Painel de TV</a>
+          <a href="{% url 'admin:pacientes_paciente_changelist' %}" class="btn btn-secondary">Gerenciar Pacientes</a>
+        </div>
+      </div>
+
+      <div class="patients-card">
+        <div class="patients-card-header">
+          <h2 style="font-size: 1.25rem;">Pacientes Cadastrados ({{ pacientes.count }})</h2>
+          <a href="{% url 'admin:pacientes_paciente_add' %}" class="btn btn-primary" style="font-size: 0.85rem;">
+            + Novo Paciente
+          </a>
+        </div>
+
+        {% if pacientes %}
+        <div style="overflow-x: auto;">
+          <table class="patients-table">
+            <thead>
+              <tr>
+                <th>RH</th>
+                <th>Nome</th>
+                <th>Classificação de Risco</th>
+                <th>Especialidade FAU</th>
+                <th>Entrada</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for p in pacientes %}
+              <tr>
+                <td><strong>{{ p.numero_registro }}</strong></td>
+                <td>{{ p.nome }}</td>
+                <td>
+                  <span class="badge-risco risco-{{ p.risco }}">{{ p.risco }}</span>
+                </td>
+                <td>{{ p.get_especialidade_primeiro_atendimento_display|default:"-" }}</td>
+                <td>{{ p.data_agendamento|date:"d/m/Y H:i" }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+          <p>Nenhum paciente cadastrado no momento.</p>
+        </div>
+        {% endif %}
+      </div>
+    </main>
+
+    <footer>Hospital Metropolitano &copy; 2026 · Sistema Integrado</footer>
+  </body>
+</html>
