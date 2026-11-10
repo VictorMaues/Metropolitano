@@ -1,4 +1,6 @@
 import json
+import socket
+from urllib.parse import urlparse, urlunparse
 
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError, transaction
@@ -182,6 +184,34 @@ def _proxima_do_ciclo(escopo):
 # Painel de senhas — API JSON
 # ---------------------------------------------------------------------------
 
+def _obter_ip_rede_local():
+    """Retorna o IP da máquina na rede local para que celulares e tablets consigam acessar."""
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(('10.255.255.255', 1))
+        ip = s.getsockname()[0]
+    except Exception:
+        ip = '127.0.0.1'
+    finally:
+        s.close()
+    return ip
+
+
+def _montar_url_acompanhar(request, token):
+    """Gera a URL absoluta de acompanhamento.
+
+    Se a requisição veio de localhost/loopback, substitui pelo IP da rede local
+    para que o QR Code lido pelo celular aponte para a máquina correta na rede.
+    """
+    url = request.build_absolute_uri(reverse('acompanhar_senha', args=[token]))
+    parsed = urlparse(url)
+    if parsed.hostname in ('127.0.0.1', 'localhost', 'testserver'):
+        ip_lan = _obter_ip_rede_local()
+        porta = f":{parsed.port}" if parsed.port else ""
+        url = urlunparse(parsed._replace(netloc=f"{ip_lan}{porta}"))
+    return url
+
+
 @require_POST
 def api_emitir_senha(request):
     dados = _ler_json(request)
@@ -192,9 +222,7 @@ def api_emitir_senha(request):
 
     senha = _emitir_senha(servico, prioridade)
     dados_senha = _serializar(senha)
-    dados_senha['url_acompanhar'] = request.build_absolute_uri(
-        reverse('acompanhar_senha', args=[senha.token])
-    )
+    dados_senha['url_acompanhar'] = _montar_url_acompanhar(request, senha.token)
     return JsonResponse(dados_senha, status=201)
 
 
