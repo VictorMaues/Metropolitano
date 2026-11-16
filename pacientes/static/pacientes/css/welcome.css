@@ -1,0 +1,139 @@
+* {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    text-transform: capitalize;
+    outline: none;
+    box-sizing: border-box;
+    transition: all linear .2s;
+}
+
+div {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    color: #333;
+    line-height: 1.6;
+}
+
+header {
+    background-color: #f8f8f8;
+    padding: 20px 0px;
+    text-align: center;
+}
+
+header .logo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.navbar ul{
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.navbar ul li a {
+    color: #2804dc;
+    font-size: 1.2rem;
+    padding: 10px 15px;
+    border-radius: 5px;
+    background-color: #f8f8f8;
+    transition: all linear .2s;
+}
+
+.navbar ul li a:hover {
+    background-color: #212791;
+    color: #f8f8f8;
+}
+
+.container .fa-bars {
+    color: #b31818;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: none;
+}
+
+.home {
+    min-height: 100vh;
+    padding-top: 10rem;
+}
+
+.home .row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 85%;
+    margin: 0 auto;
+}
+
+.home .row .images img {
+    height: 75vh;
+}
+
+.home .content {
+    max-width: 500px;
+    text-align: left;
+}
+
+.home .content h1 {
+    font-size: 3rem;
+    color: #2804dc;
+}
+
+.home .content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: start;
+}
+
+.content .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #2804dc;
+    color: #f8f8f8;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    transition: all linear .2s;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 768px) {
+    .navbar ul {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #f8f8f8;
+    }
+
+    .navbar ul li a {
+        padding: 10px;
+        text-align: center;
+    }
+
+    .container .fa-bars {
+        display: block;
+    }
+}

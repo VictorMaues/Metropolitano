@@ -1,11 +1,12 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
-    <title>Painel de Atendimento</title>
-    <link rel="stylesheet" href="pacientes/welcome.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Atendimento - Hospital Metropolitano</title>
+    <link rel="stylesheet" href="{% static 'pacientes/css/welcome.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 
@@ -32,7 +33,7 @@
 
         <div class="row">
             <div class="images">
-                <img src="/pacientes/static/pacientes/img/home.png" alt="Imagem de um médico">
+                <img src="{% static 'pacientes/img/home.png' %}" alt="Imagem de um médico">
             </div>
 
             <div class="content">
@@ -46,6 +47,13 @@
     </section>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/4.0.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.fa-bars').click(function() {
+                $('.navbar ul').toggle();
+            });
+        });
+    </script>
 </body>
 
 </html>
