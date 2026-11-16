@@ -17,6 +17,19 @@ div {
     line-height: 1.6;
 }
 
+.container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    width: 100%;
+    background-color: #ffffff;
+}
+
+body {
+    padding-top: 80px;
+}
+
 header {
     background-color: #f8f8f8;
     padding: 20px 0px;
@@ -51,6 +64,7 @@ header .logo {
     background-color: #212791;
     color: #f8f8f8;
 }
+
 
 .container .fa-bars {
     color: #b31818;
