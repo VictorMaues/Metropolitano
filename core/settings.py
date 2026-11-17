@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-y*5=y2!t8w6a_9%817y^nx7onj%w=+-zhlg-+y8juca7kjhlh7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -128,6 +128,9 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Telas protegidas (ex.: Operador de senhas) redirecionam para o login do admin
+LOGIN_URL = 'admin:login'
+
 JAZZMIN_SETTINGS = {
     # title of the window (Will default to current_admin_site.site_title if absent or None)
     'site_title': 'Hospital Metropolitano',
@@ -157,6 +160,7 @@ JAZZMIN_SETTINGS = {
         'pacientes.Paciente': 'fa-solid fa-head-side-mask',
         'pacientes.ExameSolicitado': 'fa-solid fa-microscope',
         'pacientes.AtendimentoSolicitado': 'fa-solid fa-user-md',
+        'pacientes.Senha_de_atendimento': 'fa-solid fa-ticket',
     },
 
      # Welcome text on the login screen

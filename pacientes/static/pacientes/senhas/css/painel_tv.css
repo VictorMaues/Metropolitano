@@ -1,0 +1,222 @@
+/* Painel de TV da sala de espera — portado de Painel-de-senhas/public/painel.html */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+
+body.painel-tv {
+  background-color: #f1f5f9;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Tela que libera o áudio (navegadores exigem um clique antes de tocar som) */
+#audio-unlocker {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.95);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+#audio-unlocker h2 {
+  margin-bottom: 2rem;
+}
+
+#audio-unlocker button {
+  padding: 1rem 2.5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+}
+
+#audio-unlocker button:hover {
+  background: #1d4ed8;
+}
+
+#audio-unlocker p {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+}
+
+.panel-container {
+  display: grid;
+  grid-template-columns: 7fr 3fr;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+}
+
+.main-call {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  border-right: 2px solid #e2e8f0;
+  text-align: center;
+  position: relative;
+  background: radial-gradient(circle at center, #ffffff 0%, #f1f5f9 100%);
+  transition: background-color 0.3s ease;
+}
+
+.main-call.flash {
+  background: #1e293b;
+}
+
+.call-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  margin-bottom: 2rem;
+}
+
+.current-code {
+  font-size: 10rem;
+  font-weight: 900;
+  color: var(--primary);
+  line-height: 1;
+  margin-bottom: 1.5rem;
+  letter-spacing: -2px;
+  text-shadow: 0 4px 30px rgba(37, 99, 235, 0.15);
+}
+
+.current-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.current-service {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.current-desk {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: var(--primary);
+  background: var(--primary-light);
+  border: 2px solid var(--primary);
+  padding: 0.5rem 2.5rem;
+  border-radius: var(--radius-sm);
+  display: inline-block;
+  margin-top: 1rem;
+  box-shadow: var(--shadow-md);
+}
+
+.history-panel {
+  background-color: #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  border-left: 1px solid #cbd5e1;
+  min-height: 0;
+}
+
+.history-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: 2px solid #cbd5e1;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.history-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  overflow-y: auto;
+}
+
+.history-item {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-sm);
+  padding: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.history-code {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.history-info {
+  text-align: right;
+}
+
+.history-desk {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.history-service {
+  font-size: 0.8rem;
+  color: #475569;
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+}
+
+.audio-config {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 10;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  max-width: 2.2rem;
+  overflow: hidden;
+  transition: max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease;
+  white-space: nowrap;
+  box-shadow: var(--shadow-md);
+  color: var(--text-primary);
+}
+
+.audio-config:hover {
+  max-width: 20rem;
+  padding: 0.5rem 1rem;
+  border-color: var(--primary);
+}
+
+.connection-status {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  font-size: 0.8rem;
+  color: var(--danger);
+  font-weight: 600;
+  display: none;
+}
+

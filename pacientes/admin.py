@@ -5,7 +5,22 @@ from django.http import HttpResponse
 import csv
 from django.template.loader import get_template
 from xhtml2pdf import pisa
-from .models import Paciente
+from rangefilter.filters import DateRangeFilter
+from .models import Paciente, Senha_de_atendimento
+
+
+@admin.register(Senha_de_atendimento)
+class SenhaDeAtendimentoAdmin(admin.ModelAdmin):
+    list_display = (
+        'numero', 'servico', 'prioridade', 'status', 'guiche',
+        'criando_em', 'chamado_em', 'finalizado_em',
+    )
+    list_filter = (
+        ('data_emissao', DateRangeFilter), 'status', 'servico', 'prioridade', 'guiche',
+    )
+    search_fields = ('numero',)
+    date_hierarchy = 'criando_em'
+    readonly_fields = ('token', 'sequencia', 'posicao_ciclo')
 
 @admin.register(Paciente)
 class PacienteAdmin(admin.ModelAdmin):

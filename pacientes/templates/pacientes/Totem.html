@@ -1,0 +1,113 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Totem de Autoatendimento - Hospital Metropolitano</title>
+    <link rel="stylesheet" href="{% static 'pacientes/senhas/css/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'pacientes/senhas/css/totem.css' %}" />
+  </head>
+  <body>
+    {% csrf_token %}
+    <div class="panel-header">
+      <div class="brand">
+        <img class="brand-logo" src="{% static 'pacientes/img/logo.jpg' %}" alt="Logo Hospital Metropolitano" />
+        <span class="brand-name">Hospital Metropolitano</span>
+      </div>
+      <div class="clock-area">
+        <div class="badge badge-normal" id="clock">00:00:00</div>
+        <div class="day-of-week" id="day-of-week">-</div>
+      </div>
+    </div>
+
+    <main class="totem-main">
+      <div class="totem-container">
+        <!-- PASSO 1: Serviço -->
+        <div id="step-service" class="step-section active">
+          <h2>Selecione o Serviço Desejado:</h2>
+          <div class="options-grid">
+            {% for valor, rotulo in servicos %}
+            <button type="button" class="option-card" data-servico="{{ valor }}">
+              {% if valor == 'RECEPCAO' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" /></svg>
+              <h3>{{ rotulo }}</h3>
+              <p>Abertura de ficha e cadastro de pacientes</p>
+              {% elif valor == 'EXAMES' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23-.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" /></svg>
+              <h3>{{ rotulo }}</h3>
+              <p>Coleta, laboratório, imagem e entrega de resultados</p>
+              {% elif valor == 'INFORMACOES' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" /></svg>
+              <h3>{{ rotulo }}</h3>
+              <p>Informações sobre pacientes, acompanhantes e visitas</p>
+              {% else %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 0 1 0 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 0 1 0-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375Z" /></svg>
+              <h3>{{ rotulo }}</h3>
+              {% endif %}
+            </button>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- PASSO 2: Prioridade -->
+        <div id="step-priority" class="step-section">
+          <h2>Selecione o Tipo de Atendimento:</h2>
+          <div class="totem-error" id="totem-error" role="alert"></div>
+          <div class="options-grid">
+            <button type="button" class="option-card" data-prioridade="NORMAL">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>
+              <h3>Atendimento Comum</h3>
+              <p>Fila geral por ordem de chegada</p>
+            </button>
+            <button type="button" class="option-card prioridade" data-prioridade="PREFERENCIAL">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.05 4.575a1.5 1.5 0 0 1 2.9 0l.443 1.8a1.5 1.5 0 0 0 1.096 1.097l1.8.443a1.5 1.5 0 0 1 0 2.9l-1.8.443a1.5 1.5 0 0 0-1.097 1.096l-.443 1.8a1.5 1.5 0 0 1-2.9 0l-.443-1.8a1.5 1.5 0 0 0-1.096-1.097l-1.8-.443a1.5 1.5 0 0 1 0-2.9l1.8-.443a1.5 1.5 0 0 0 1.097-1.096l.443-1.8Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A11.386 11.386 0 0 1 10.05 20.4a11.386 11.386 0 0 1-4.95-1.163v-.111c0-1.11.285-2.16.786-3.07M10.05 19.125v.003m0 0A6 6 0 0 1 4.5 13.5a6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 5.625Z" /></svg>
+              <h3>Atendimento Preferencial</h3>
+              <p>Idosos, gestantes, PCD e lactantes</p>
+            </button>
+            <button type="button" class="option-card super" data-prioridade="SUPER">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" /></svg>
+              <h3>Superprioridade</h3>
+              <p>Pessoas com 80 anos ou mais</p>
+            </button>
+          </div>
+          <button type="button" class="btn btn-secondary btn-large" id="btn-voltar">Voltar</button>
+        </div>
+
+        <!-- PASSO 3: Ticket emitido -->
+        <div id="step-success" class="step-section">
+          <h2 class="success-title">Senha Emitida com Sucesso!</h2>
+
+          <div class="ticket-box" id="ticket-print">
+            <div class="ticket-org">Hospital Metropolitano</div>
+            <div class="ticket-service" id="print-service-title">-</div>
+            <div class="ticket-type" id="print-type-badge">-</div>
+            <div class="ticket-number" id="print-code">---</div>
+            <div class="ticket-qrcode" id="print-qrcode-container">
+              <img id="print-qrcode" src="" alt="QR Code para acompanhar a senha" />
+              <span>Acompanhe pelo celular</span>
+            </div>
+            <div class="ticket-footer">
+              <div>Emissão: <span id="print-time">--:--</span></div>
+              <div style="margin-top: 0.5rem; font-weight: bold">
+                Por favor, aguarde a chamada no painel.
+              </div>
+            </div>
+          </div>
+
+          <p class="subtitle">Retire a sua senha impressa.</p>
+          <button type="button" class="btn btn-primary btn-large" id="btn-finalizar">Finalizar</button>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      window.TOTEM_CONFIG = {
+        urlEmitir: "{% url 'api_emitir_senha' %}",
+      };
+    </script>
+    <script src="{% static 'pacientes/senhas/js/senhas.js' %}"></script>
+    <script src="{% static 'pacientes/senhas/js/totem.js' %}"></script>
+  </body>
+</html>
+
