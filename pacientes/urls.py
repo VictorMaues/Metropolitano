@@ -1,11 +1,14 @@
 from django.urls import path
-from .views import pagina_inicial
 from . import views
 
 urlpatterns = [
-    path('', pagina_inicial, name='pagina_inicial'),
+    # Tela inicial ao abrir o projeto (Bem-Vindo)
+    path('', views.view_bemvindo, name='BemVindo'),
+    path('bemvindo/', views.view_bemvindo, name='bemvindo_alias'),
+
+    # Painel de gestão de pacientes (Dashboard)
+    path('pacientes/', views.pagina_inicial, name='pagina_inicial'),
     path('painel/', views.view_painel_tv, name='Painel_Tv'),
-    path('bemvindo/', views.view_bemvindo, name='BemVindo'),
 
     # Painel de senhas
     path('senhas/', views.view_portal_senhas, name='senhas_portal'),

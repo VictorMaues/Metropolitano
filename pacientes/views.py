@@ -16,17 +16,20 @@ from .models import Paciente, Senha_de_atendimento
 Senha = Senha_de_atendimento
 
 
+def view_bemvindo(request):
+    """View que exibe a página institucional de boas-vindas."""
+    return render(request, 'pacientes/BemVindo.html')
+
+
 def pagina_inicial(request):
+    """Painel geral de pacientes e visão geral do sistema."""
     pacientes = Paciente.objects.all()
     return render(request, 'pacientes/pagina_inicial.html', {'pacientes': pacientes})
 
+
 def view_painel_tv(request):
     """View que exibe o painel de TV."""
-    return render(request, 'pacientes/Painel_Tv.html') 
-
-def view_bemvindo(request):
-    """view que exibe a pagina de Bem Vindo. """
-    return render (request, 'pacientes/BemVindo.html')
+    return render(request, 'pacientes/Painel_Tv.html')
 
 
 # ---------------------------------------------------------------------------

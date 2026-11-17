@@ -101,6 +101,14 @@ class PainelSenhasTests(TestCase):
         """Testa se todas as páginas renderizam com código HTTP 200"""
         self.client.login(username='operador1', password='password123')
         
+        # Tela inicial (Bem-Vindo)
+        resp = self.client.get(reverse('BemVindo'))
+        self.assertEqual(resp.status_code, 200)
+
+        # Gestão de Pacientes
+        resp = self.client.get(reverse('pagina_inicial'))
+        self.assertEqual(resp.status_code, 200)
+
         # Portal de senhas
         resp = self.client.get(reverse('senhas_portal'))
         self.assertEqual(resp.status_code, 200)
