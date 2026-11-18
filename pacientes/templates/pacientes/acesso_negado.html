@@ -1,0 +1,142 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acesso Restrito - Hospital Metropolitano</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg: #f4f7f9;
+      --ink: #142c38;
+      --muted: #71838d;
+      --teal: #087c83;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      background: #ffffff;
+      max-width: 500px;
+      width: 100%;
+      border-radius: 18px;
+      padding: 40px 32px;
+      box-shadow: 0 10px 30px rgba(16, 45, 56, 0.08);
+      border: 1px solid #e2ebef;
+      text-align: center;
+    }
+    .icon-lock {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #fee2e2;
+      color: #dc2626;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .icon-lock svg { width: 32px; height: 32px; }
+    h1 {
+      font-family: 'Manrope', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: #142c38;
+      margin-bottom: 12px;
+    }
+    p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .user-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 24px;
+      font-size: 13px;
+    }
+    .user-box strong { color: #1e293b; }
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 13px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--teal);
+      color: #ffffff;
+      border: none;
+    }
+    .btn-primary:hover {
+      background: #066268;
+    }
+    .btn-outline {
+      background: transparent;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+    }
+    .btn-outline:hover {
+      background: #f1f5f9;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon-lock">
+      <i data-lucide="shield-alert"></i>
+    </div>
+    <h1>Acesso Restrito</h1>
+    <p>
+      O <strong>Dashboard de Atendimento de Pacientes</strong> é de uso exclusivo da equipe médica e assistencial (Doutor/Enfermeira).
+      <br><br>
+      <em>Em ambiente de teste, o acesso está autorizado exclusivamente para a conta <strong>adm</strong>.</em>
+    </p>
+
+    <div class="user-box">
+      Usuário conectado: <strong>{{ usuario.username }}</strong>
+    </div>
+
+    <div class="actions">
+      <a href="{% url 'admin:login' %}?next={% url 'dashboard_atendimento' %}" class="btn btn-primary">
+        <i data-lucide="log-in"></i> Entrar com usuário autorizado (adm)
+      </a>
+      <a href="{% url 'pagina_inicial' %}" class="btn btn-outline">
+        <i data-lucide="arrow-left"></i> Voltar à Página Inicial
+      </a>
+    </div>
+  </div>
+
+  <script>
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  </script>
+</body>
+</html>

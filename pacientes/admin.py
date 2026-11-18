@@ -32,6 +32,7 @@ class PacienteAdmin(admin.ModelAdmin):
                 'numero_registro',
                 'nome',
                 'risco',
+                'status',
                 'especialidade_primeiro_atendimento',
                 'hora_primeiro_atendimento',
             )
@@ -74,6 +75,7 @@ class PacienteAdmin(admin.ModelAdmin):
         'numero_registro',
         'nome',
         'colored_risco',
+        'status',
         'especialidade_primeiro_atendimento',
         'hora_primeiro_atendimento',
         'status_especialidades_pendentes',
@@ -120,6 +122,7 @@ class PacienteAdmin(admin.ModelAdmin):
     ####################################################################################################
 
     list_filter = (
+        'status',
         'risco',
         'especialidade_primeiro_atendimento',
     )

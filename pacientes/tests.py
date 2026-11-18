@@ -124,3 +124,133 @@ class PainelSenhasTests(TestCase):
         # Operador (autenticado)
         resp = self.client.get(reverse('operador_senhas'))
         self.assertEqual(resp.status_code, 200)
+
+
+class DashboardAtendimentoTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        # Usuário ADM (em teste, apenas adm tem acesso liberado)
+        self.adm = User.objects.create_superuser(
+            username='adm',
+            email='adm@hospital.com',
+            password='admpassword'
+        )
+        # Usuário Comum (não autorizado)
+        self.usuario_comum = User.objects.create_user(
+            username='comum',
+            password='password123'
+        )
+        # Grupos de saúde
+        from django.contrib.auth.models import Group
+        self.grupo_doutor = Group.objects.create(name='Doutor')
+        self.grupo_enfermeira = Group.objects.create(name='Enfermeira')
+
+        self.doutor = User.objects.create_user(username='dr_roberto', password='password123')
+        self.doutor.groups.add(self.grupo_doutor)
+
+        self.enfermeira = User.objects.create_user(username='enf_mariana', password='password123')
+        self.enfermeira.groups.add(self.grupo_enfermeira)
+
+        # Paciente de teste
+        from .models import Paciente
+        self.paciente = Paciente.objects.create(
+            numero_registro='PAC-TEST-01',
+            nome='Carlos Alberto',
+            risco='Amarelo',
+            status='waiting'
+        )
+
+    def test_acesso_anonimo_redireciona_login(self):
+        """Usuário anônimo deve ser redirecionado para a página de login."""
+        resp = self.client.get(reverse('dashboard_atendimento'))
+        self.assertEqual(resp.status_code, 302)
+        self.assertIn('/admin/login/', resp.get('Location'))
+
+    def test_usuario_comum_acesso_negado(self):
+        """Usuário sem perfil de médico/enfermeiro ou adm deve receber 403."""
+        self.client.login(username='comum', password='password123')
+        resp = self.client.get(reverse('dashboard_atendimento'))
+        self.assertEqual(resp.status_code, 403)
+        self.assertContains(resp, 'Acesso Restrito', status_code=403)
+
+        # API também deve bloquear com 403
+        resp_api = self.client.get(reverse('api_dashboard_pacientes'))
+        self.assertEqual(resp_api.status_code, 403)
+
+    def test_adm_tem_acesso_total(self):
+        """Usuário adm deve conseguir visualizar a tela e consumir a API."""
+        self.client.login(username='adm', password='admpassword')
+        resp = self.client.get(reverse('dashboard_atendimento'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'Fila de atendimento')
+
+        # API
+        resp_api = self.client.get(reverse('api_dashboard_pacientes'))
+        self.assertEqual(resp_api.status_code, 200)
+        data = resp_api.json()
+        self.assertTrue(data['sucesso'])
+        self.assertIn('metricas', data)
+        self.assertIn('pacientes', data)
+
+    def test_doutor_e_enfermeira_tem_acesso(self):
+        """Usuários nos grupos Doutor e Enfermeira devem ter acesso."""
+        # Doutor
+        self.client.login(username='dr_roberto', password='password123')
+        resp = self.client.get(reverse('dashboard_atendimento'))
+        self.assertEqual(resp.status_code, 200)
+
+        # Enfermeira
+        self.client.login(username='enf_mariana', password='password123')
+        resp = self.client.get(reverse('dashboard_atendimento'))
+        self.assertEqual(resp.status_code, 200)
+
+    def test_atualizar_status_paciente_api(self):
+        """Médico ou adm pode alterar status do paciente na fila."""
+        self.client.login(username='adm', password='admpassword')
+        
+        # Iniciar atendimento
+        url_status = reverse('api_atualizar_status_paciente', args=[self.paciente.pk])
+        resp = self.client.post(
+            url_status,
+            data=json.dumps({'status': 'service'}),
+            content_type='application/json'
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.paciente.refresh_from_db()
+        self.assertEqual(self.paciente.status, 'service')
+        self.assertIsNotNone(self.paciente.hora_primeiro_atendimento)
+
+        # Concluir atendimento
+        resp2 = self.client.post(
+            url_status,
+            data=json.dumps({'status': 'done'}),
+            content_type='application/json'
+        )
+        self.assertEqual(resp2.status_code, 200)
+        self.paciente.refresh_from_db()
+        self.assertEqual(self.paciente.status, 'done')
+
+    def test_detalhe_paciente_api(self):
+        """A ficha detalhada retorna os grupos de solicitações com status de conclusão."""
+        self.paciente.exames_pendentes = ['RX', 'TC']
+        self.paciente.exames_concluidos = ['RX']
+        self.paciente.save()
+
+        self.client.login(username='adm', password='admpassword')
+        resp = self.client.get(reverse('api_detalhe_paciente', args=[self.paciente.pk]))
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertEqual(data['nome'], 'Carlos Alberto')
+        self.assertEqual(data['codigo'], 'PAC-TEST-01')
+
+        exames = next(g for g in data['grupos'] if g['titulo'] == 'Exames')
+        itens = {i['codigo']: i for i in exames['itens']}
+        self.assertTrue(itens['RX']['concluido'])
+        self.assertFalse(itens['TC']['concluido'])
+        self.assertEqual(itens['TC']['rotulo'], 'Tomografia Computadorizada')
+
+    def test_detalhe_paciente_bloqueado_para_usuario_comum(self):
+        """Usuário sem permissão não acessa a ficha detalhada."""
+        self.client.login(username='comum', password='password123')
+        resp = self.client.get(reverse('api_detalhe_paciente', args=[self.paciente.pk]))
+        self.assertEqual(resp.status_code, 403)

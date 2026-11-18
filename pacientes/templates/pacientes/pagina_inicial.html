@@ -92,6 +92,9 @@
         <span class="brand-name">Hospital Metropolitano</span>
       </div>
       <div>
+        <a href="{% url 'dashboard_atendimento' %}" class="btn btn-primary" style="margin-right: 0.5rem; background: #087c83; border-color: #087c83;">
+          Dashboard de Atendimento
+        </a>
         <a href="{% url 'senhas_portal' %}" class="btn btn-primary" style="margin-right: 0.5rem;">
           Portal de Senhas
         </a>
@@ -106,6 +109,7 @@
         <h1>Gestão de Pacientes & Fluxo Hospitalar</h1>
         <p>Acompanhamento de triagem, especialidades médicas e atendimento de urgência.</p>
         <div class="actions-bar">
+          <a href="{% url 'dashboard_atendimento' %}" class="btn btn-primary" style="background: #087c83; border-color: #087c83;">Fila de Atendimento (Médico/Enf)</a>
           <a href="{% url 'senhas_portal' %}" class="btn btn-primary">Sistema de Senhas</a>
           <a href="{% url 'Totem' %}" class="btn btn-secondary">Totem de Autoatendimento</a>
           <a href="{% url 'Painel_Tv' %}" class="btn btn-secondary">Painel de TV</a>

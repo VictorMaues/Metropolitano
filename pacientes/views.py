@@ -1,12 +1,13 @@
 import json
 import socket
+from functools import wraps
 from urllib.parse import urlparse, urlunparse
 
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError, transaction
 from django.db.models import Max
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
@@ -30,6 +31,216 @@ def pagina_inicial(request):
 def view_painel_tv(request):
     """View que exibe o painel de TV."""
     return render(request, 'pacientes/Painel_Tv.html')
+
+
+# ---------------------------------------------------------------------------
+# Dashboard de Atendimento de Pacientes (Restrito: Doutor, Enfermeira ou Adm)
+# ---------------------------------------------------------------------------
+
+def user_tem_permissao_dashboard(user):
+    """
+    Verifica se o usuário tem permissão para visualizar o dashboard de atendimento.
+    Regra do projeto: Apenas o doutor/enfermeira vai poder visualizar (como teste, apenas adm vai ver).
+    """
+    if not user.is_authenticated:
+        return False
+
+    # Em teste: adm ou superusuário tem permissão total
+    if user.username.lower() == 'adm' or user.is_superuser:
+        return True
+
+    # Grupos autorizados para Doutores e Enfermeiras
+    grupos_autorizados = {
+        'doutor', 'doutores', 'doutora', 'doutoras',
+        'medico', 'médico', 'medicos', 'médicos', 'medica', 'médica',
+        'enfermeira', 'enfermeiras', 'enfermeiro', 'enfermeiros',
+    }
+    user_grupos = {g.name.lower() for g in user.groups.all()}
+    if user_grupos.intersection(grupos_autorizados):
+        return True
+
+    return False
+
+
+def doutor_ou_enfermeira_required(view_func):
+    """Decorator que restringe o acesso exclusivamente a Médicos, Enfermeiras ou Adm."""
+    @wraps(view_func)
+    def _wrapped(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect(f"{reverse('admin:login')}?next={request.path}")
+
+        if not user_tem_permissao_dashboard(request.user):
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.path.startswith('/api/'):
+                return JsonResponse({
+                    'erro': 'Acesso negado. Apenas doutores, enfermeiras ou adm têm acesso ao dashboard.'
+                }, status=403)
+            return render(request, 'pacientes/acesso_negado.html', {'usuario': request.user}, status=403)
+
+        return view_func(request, *args, **kwargs)
+
+    return _wrapped
+
+
+@doutor_ou_enfermeira_required
+def view_dashboard_atendimento(request):
+    """View principal do dashboard de atendimento (baseado no modelo Clara.care)."""
+    user = request.user
+    if user.username.lower() == 'adm' or user.is_superuser:
+        user_role = 'Administrador'
+    else:
+        grupos = [g.name for g in user.groups.all()]
+        user_role = ', '.join(grupos) if grupos else 'Equipe de Saúde'
+
+    initials = (
+        (user.first_name[:1] + user.last_name[:1]).upper()
+        if user.first_name and user.last_name
+        else user.username[:2].upper()
+    )
+
+    return render(request, 'pacientes/dashboard_atendimento.html', {
+        'user_role': user_role,
+        'user_initials': initials,
+    })
+
+
+@doutor_ou_enfermeira_required
+@require_GET
+def api_dashboard_pacientes(request):
+    """API que alimenta a lista de pacientes e métricas do dashboard em tempo real."""
+    agora = timezone.now()
+    pacientes_qs = Paciente.objects.all().order_by('data_agendamento')
+
+    pacientes_lista = []
+    espera_total_minutos = 0
+    total_aguardando = 0
+    total_atendimento = 0
+
+    for p in pacientes_qs:
+        delta_segundos = max(0, (agora - p.data_agendamento).total_seconds())
+        espera_minutos = int(delta_segundos / 60)
+
+        # Se for do mesmo dia, mostra a espera real; se for data histórica de teste, exibe valor proporcional
+        if p.data_agendamento.date() == timezone.localdate():
+            espera_exibida = espera_minutos
+        else:
+            espera_exibida = min(espera_minutos, 120)
+
+        if p.status == 'waiting':
+            total_aguardando += 1
+            espera_total_minutos += espera_exibida
+        elif p.status == 'service':
+            total_atendimento += 1
+
+        chegada_local = timezone.localtime(p.data_agendamento)
+
+        pacientes_lista.append({
+            'id': p.pk,
+            'nome': p.nome,
+            'codigo': p.numero_registro,
+            'risco': p.risco,
+            'status': p.status,
+            'especialidade': p.get_especialidade_primeiro_atendimento_display(),
+            'chegada_hora': chegada_local.strftime('%H:%M'),
+            'chegada_iso': p.data_agendamento.isoformat(),
+            'espera_minutos': espera_exibida,
+            'hora_primeiro_atendimento': (
+                p.hora_primeiro_atendimento.strftime('%H:%M')
+                if p.hora_primeiro_atendimento
+                else None
+            ),
+        })
+
+    espera_media = round(espera_total_minutos / total_aguardando) if total_aguardando > 0 else 0
+
+    return JsonResponse({
+        'sucesso': True,
+        'metricas': {
+            'aguardando': total_aguardando,
+            'em_atendimento': total_atendimento,
+            'espera_media_minutos': espera_media,
+        },
+        'pacientes': pacientes_lista,
+    })
+
+
+@doutor_ou_enfermeira_required
+@require_POST
+def api_atualizar_status_paciente(request, pk):
+    """API para atualizar o status do atendimento do paciente (waiting, service, done)."""
+    dados = _ler_json(request)
+    novo_status = dados.get('status')
+    if novo_status not in ['waiting', 'service', 'done']:
+        return JsonResponse({'erro': 'Status inválido informado.'}, status=400)
+
+    paciente = get_object_or_404(Paciente, pk=pk)
+    paciente.status = novo_status
+    if novo_status == 'service' and not paciente.hora_primeiro_atendimento:
+        paciente.hora_primeiro_atendimento = timezone.localtime().time()
+    paciente.save()
+
+    return JsonResponse({
+        'sucesso': True,
+        'id': paciente.pk,
+        'status': paciente.status,
+        'hora_primeiro_atendimento': (
+            paciente.hora_primeiro_atendimento.strftime('%H:%M')
+            if paciente.hora_primeiro_atendimento
+            else None
+        ),
+    })
+
+
+def _itens_com_status(pendentes, concluidos, choices):
+    """Monta a lista de itens solicitados indicando se cada um já foi concluído."""
+    rotulos = dict(choices)
+    pendentes = list(pendentes or [])
+    concluidos = list(concluidos or [])
+    itens = []
+    for codigo in pendentes + [c for c in concluidos if c not in pendentes]:
+        itens.append({
+            'codigo': codigo,
+            'rotulo': rotulos.get(codigo, codigo),
+            'concluido': codigo in concluidos,
+        })
+    return itens
+
+
+@doutor_ou_enfermeira_required
+@require_GET
+def api_detalhe_paciente(request, pk):
+    """Ficha detalhada do paciente exibida no modal "Ver Ficha" do dashboard."""
+    p = get_object_or_404(Paciente, pk=pk)
+    entrada = timezone.localtime(p.data_agendamento)
+    espera = int(max(0, (timezone.now() - p.data_agendamento).total_seconds()) / 60)
+
+    grupos = [
+        ('Especialidades', p.especialidades_pendentes, p.especialidades_concluidas, Paciente.ESPECIALIDADES),
+        ('Exames', p.exames_pendentes, p.exames_concluidos, Paciente.EXAMES),
+        ('Procedimentos', p.procedimentos_pendentes, p.procedimentos_concluidos, Paciente.PROCEDIMENTOS),
+        ('Enfermagem', p.enfermagem_pendentes, p.enfermagem_concluidos, Paciente.ENFERMAGEM),
+        ('Outras Solicitações', p.solicitacoes_pendentes, p.solicitacoes_concluidos, Paciente.SOLICITACOES),
+    ]
+
+    return JsonResponse({
+        'id': p.pk,
+        'nome': p.nome,
+        'codigo': p.numero_registro,
+        'risco': p.risco,
+        'status': p.status,
+        'status_label': p.get_status_display(),
+        'entrada_data': entrada.strftime('%d/%m/%Y'),
+        'entrada_hora': entrada.strftime('%H:%M'),
+        'espera_minutos': espera,
+        'especialidade': p.get_especialidade_primeiro_atendimento_display() or None,
+        'hora_primeiro_atendimento': (
+            p.hora_primeiro_atendimento.strftime('%H:%M') if p.hora_primeiro_atendimento else None
+        ),
+        'grupos': [
+            {'titulo': titulo, 'itens': _itens_com_status(pend, conc, choices)}
+            for titulo, pend, conc, choices in grupos
+        ],
+        'url_admin': reverse('admin:pacientes_paciente_change', args=[p.pk]),
+    })
 
 
 # ---------------------------------------------------------------------------

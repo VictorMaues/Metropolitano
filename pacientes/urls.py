@@ -10,6 +10,13 @@ urlpatterns = [
     path('pacientes/', views.pagina_inicial, name='pagina_inicial'),
     path('painel/', views.view_painel_tv, name='Painel_Tv'),
 
+    # Dashboard de Atendimento Clínico (Clara.care - Restrito: Doutor/Enfermeira/Adm)
+    path('dashboard/', views.view_dashboard_atendimento, name='dashboard_atendimento'),
+    path('atendimento/', views.view_dashboard_atendimento, name='dashboard_atendimento_alias'),
+    path('api/dashboard/pacientes/', views.api_dashboard_pacientes, name='api_dashboard_pacientes'),
+    path('api/dashboard/paciente/<int:pk>/', views.api_detalhe_paciente, name='api_detalhe_paciente'),
+    path('api/dashboard/paciente/<int:pk>/status/', views.api_atualizar_status_paciente, name='api_atualizar_status_paciente'),
+
     # Painel de senhas
     path('senhas/', views.view_portal_senhas, name='senhas_portal'),
     path('totem/', views.view_totem, name='Totem'),

@@ -151,6 +151,24 @@
             Abrir Operador
           </a>
         </div>
+
+        <!-- Card 4: Fila de Atendimento de Pacientes (Doutor/Enfermeira/Adm) -->
+        <div class="launch-card">
+          <div style="display: flex; flex-direction: column; align-items: center">
+            <div class="icon-wrapper" style="background: #e6f6f5; color: #087c83;">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+              </svg>
+            </div>
+            <h2>4. Atendimento Clínico (Médico/Enf)</h2>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 0.5rem;">
+              Dashboard exclusivo para Doutores e Enfermeiras: acompanhe a ordem de chegada, tempo de espera e controle o atendimento.
+            </p>
+          </div>
+          <a href="{% url 'dashboard_atendimento' %}" class="btn btn-primary" style="width: 100%; background: #087c83; border-color: #087c83;">
+            Acessar Dashboard
+          </a>
+        </div>
       </div>
     </main>
 

@@ -45,10 +45,17 @@ class Paciente(models.Model):
         ('BC', 'Boletim de Comunicação'),
     ]
 
+    STATUS_CHOICES = [
+        ('waiting', 'Aguardando'),
+        ('service', 'Em atendimento'),
+        ('done', 'Concluído'),
+    ]
+
     data_agendamento = models.DateTimeField('Data e Hora da Entrada', default=timezone.now)
     numero_registro = models.CharField('RH (Registro Hospitalar)', max_length=20, unique=True) #ver com o admin quantos caracteres são necessários para esse campo.
     nome = models.CharField('Nome', max_length=100)
     risco = models.CharField('Classificação de Risco', max_length=10, choices=CLASSIFICACAO_RISCO)
+    status = models.CharField('Status do Atendimento', max_length=20, choices=STATUS_CHOICES, default='waiting')
 
     especialidade_primeiro_atendimento = models.CharField(
         'Especialidade FAU',
