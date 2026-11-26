@@ -6,6 +6,7 @@
 
 [![Python Version](https://img.shields.io/badge/Python-3.11%20%7C%203.12%20%7C%203.14-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Django Version](https://img.shields.io/badge/Django-5.2-092E20?style=for-the-badge&logo=django&logoColor=white)](https://www.djangoproject.com/)
+[![Bun Task Runner](https://img.shields.io/badge/Bun-Task%20Runner-black?style=for-the-badge&logo=bun&logoColor=white)](https://bun.sh/)
 [![Architecture](https://img.shields.io/badge/Architecture-MTV%20%2B%20REST%20APIs-blueviolet?style=for-the-badge)](#-arquitetura-do-sistema)
 [![Database](https://img.shields.io/badge/Database-SQLite%20(Dev)%20%7C%20PostgreSQL%20(Ready)-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
 [![Test Suite](https://img.shields.io/badge/Tests-5%2F5%20Passing%20(100%25)-success?style=for-the-badge&logo=pytest&logoColor=white)](#-testes-e-garantia-de-qualidade)
@@ -251,6 +252,7 @@ Metropolitano/
 ├── templates/                              # Sobrescrita de templates globais do Django
 │   ├── admin/login.html
 │   └── registration/base.html
+├── package.json                            # Manifest e automação de scripts (Bun Task Runner)
 ├── requirements.txt                        # Manifesto determinístico de dependências Python
 ├── .gitignore                              # Diretivas de exclusão estrita para Git
 └── manage.py                               # CLI administrativo do framework
@@ -264,8 +266,35 @@ Metropolitano/
 - **Git** $\ge$ 2.40
 - **Python** $\ge$ 3.11 (Compatível e validado com Python 3.12 e 3.14)
 - **pip** $\ge$ 23.0
+- **Bun** $\ge$ 1.0 *(Recomendado para execução ágil com comando único)*
 
-### Guia de Inicialização
+---
+
+### ⚡ Execução Rápida via Bun (Recomendado)
+
+O projeto conta com automação via `package.json`, permitindo executar o servidor e rotinas de manutenção com um único comando, **sem necessidade de ativar manualmente o ambiente virtual**:
+
+```bash
+# Iniciar o servidor de desenvolvimento diretamente
+bun dev
+```
+
+#### 📋 Catálogo de Comandos Bun
+
+| Comando | Equivalente Django | Finalidade |
+| :--- | :--- | :--- |
+| `bun dev` *(ou `bun run dev`)* | `./venv/bin/python manage.py runserver` | Inicia o servidor HTTP local na porta 8000 |
+| `bun run migrate` | `./venv/bin/python manage.py migrate` | Aplica migrações pendentes no banco relacional |
+| `bun run makemigrations` | `./venv/bin/python manage.py makemigrations` | Gera novos arquivos de migração a partir dos models |
+| `bun run check` | `./venv/bin/python manage.py check` | Executa diagnóstico de integridade do sistema |
+| `bun run test` | `./venv/bin/python manage.py test` | Executa a bateria de testes automatizados |
+| `bun run shell` | `./venv/bin/python manage.py shell` | Inicializa o shell interativo do Django |
+
+---
+
+### 🐍 Guia de Inicialização Tradicional (Python CLI)
+
+Caso prefira o fluxo nativo padrão do ecossistema Python:
 
 1. **Clonagem e navegação:**
    ```bash
@@ -324,6 +353,13 @@ A integridade do domínio de atendimento é afiançada por uma suíte de testes 
 * `test_render_views`: Checagem de integridade de código HTTP 200 em todas as rotas públicas e autenticadas.
 
 ### Como Executar
+
+**Via Bun (rápido):**
+```bash
+bun run test
+```
+
+**Via Python nativo:**
 ```bash
 python manage.py test pacientes -v 2
 ```

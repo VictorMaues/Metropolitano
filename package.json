@@ -1,0 +1,14 @@
+{
+  "name": "hospital-metropolitano",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sistema Integrado de Gestão Hospitalar e Triagem Clínica",
+  "scripts": {
+    "dev": "./venv/bin/python manage.py runserver",
+    "migrate": "./venv/bin/python manage.py migrate",
+    "makemigrations": "./venv/bin/python manage.py makemigrations",
+    "check": "./venv/bin/python manage.py check",
+    "test": "./venv/bin/python manage.py test",
+    "shell": "./venv/bin/python manage.py shell"
+  }
+}
