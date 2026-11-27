@@ -192,6 +192,15 @@ class DashboardAtendimentoTests(TestCase):
         self.assertIn('metricas', data)
         self.assertIn('pacientes', data)
 
+    def test_dashboard_atendimento_carrega_driver_js(self):
+        """Dashboard deve carregar os assets do Driver.js e o botão do tour."""
+        self.client.login(username='adm', password='admpassword')
+        resp = self.client.get(reverse('dashboard_atendimento'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'pacientes/css/driver.css')
+        self.assertContains(resp, 'pacientes/js/driver.js.iife.js')
+        self.assertContains(resp, 'id="tour-button"')
+
     def test_doutor_e_enfermeira_tem_acesso(self):
         """Usuários nos grupos Doutor e Enfermeira devem ter acesso."""
         # Doutor

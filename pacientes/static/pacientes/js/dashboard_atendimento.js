@@ -41,6 +41,7 @@
     resultCount: document.getElementById('result-count'),
     updatedAt: document.getElementById('updated-at'),
     refreshButton: document.getElementById('refresh-button'),
+    tourButton: document.getElementById('tour-button'),
     filterButtons: document.querySelectorAll('[data-filter]'),
     toastContainer: document.getElementById('toast-container')
   };
@@ -569,6 +570,149 @@
     });
   }
 
+  /* ------------------------------------------------------------------
+   * Driver.js (Tour Guiado do Painel)
+   * ------------------------------------------------------------------ */
+  function iniciarTour() {
+    if (!window.driver || !window.driver.js || typeof window.driver.js.driver !== 'function') {
+      console.warn('Driver.js não carregado.');
+      return;
+    }
+
+    const driver = window.driver.js.driver;
+
+    // Elemento para o passo dos cards (usa o primeiro card existente ou a área da fila)
+    const primeiroCard = document.querySelector('.queue-card');
+    const cardEl = primeiroCard || '#queue-body';
+    const acoesEl = primeiroCard ? (primeiroCard.querySelector('.card-actions') || primeiroCard) : '#queue-body';
+
+    const tourSteps = [
+      {
+        element: '.intro',
+        popover: {
+          title: '🏥 Fila de Atendimento',
+          description: 'Bem-vindo ao painel do Hospital Metropolitano! Aqui você acompanha a ordem de chegada, triagem e andamento dos atendimentos clínicos em tempo real.',
+          side: 'bottom',
+          align: 'start'
+        }
+      },
+      {
+        element: '.metrics',
+        popover: {
+          title: '📊 Indicadores em Tempo Real',
+          description: 'Acompanhe a contagem de pacientes aguardando, atendimentos em andamento e o tempo médio de espera calculado automaticamente.',
+          side: 'bottom',
+          align: 'center'
+        }
+      },
+      {
+        element: '.metric-next',
+        popover: {
+          title: '➡️ Próximo na Fila',
+          description: 'Indica o próximo paciente a ser atendido pela equipe clínica com base no horário de chegada e triagem.',
+          side: 'bottom',
+          align: 'end'
+        }
+      },
+      {
+        element: '#refresh-button',
+        popover: {
+          title: '🔄 Sincronização e Horários',
+          description: 'A fila é atualizada a cada 30 segundos, mas você pode clicar aqui para atualizar imediatamente os dados e contadores.',
+          side: 'bottom',
+          align: 'end'
+        }
+      },
+      {
+        element: '#patient-search',
+        popover: {
+          title: '🔍 Busca Rápida',
+          description: 'Digite o nome do paciente ou o número do prontuário (RH) para localizá-lo instantaneamente na fila.',
+          side: 'bottom',
+          align: 'start'
+        }
+      },
+      {
+        element: '.tabs',
+        popover: {
+          title: '🏷️ Filtros por Status',
+          description: 'Alterne a visualização entre pacientes Aguardando, Em atendimento ou Concluídos para organizar seu fluxo de trabalho.',
+          side: 'bottom',
+          align: 'end'
+        }
+      },
+      {
+        element: cardEl,
+        popover: {
+          title: '📋 Cartão do Paciente',
+          description: 'Mostra a ordem na fila, dados do paciente, tempo de espera, classificação de risco (Manchester) e especialidade.',
+          side: 'top',
+          align: 'start'
+        }
+      },
+      {
+        element: acoesEl,
+        popover: {
+          title: '⚡ Ações de Atendimento & Ficha',
+          description: 'Inicie ou conclua o atendimento em um clique. Clique em "Ver Ficha" para abrir histórico, solicitações de exames e especialidades.',
+          side: 'top',
+          align: 'center'
+        }
+      },
+      {
+        element: '.user-profile-badge',
+        popover: {
+          title: '👤 Perfil & Sessão',
+          description: 'Exibe o profissional autenticado, sua função na unidade e o botão seguro de encerramento de sessão.',
+          side: 'bottom',
+          align: 'end'
+        }
+      },
+      {
+        element: '#tour-button',
+        popover: {
+          title: '💡 Guia Interativo Sempre à Mão',
+          description: 'Sempre que tiver dúvidas ou quiser rever as funcionalidades do painel, basta clicar neste botão!',
+          side: 'bottom',
+          align: 'start'
+        }
+      }
+    ];
+
+    const driverObj = driver({
+      showProgress: true,
+      animate: true,
+      allowClose: true,
+      overlayColor: '#102d38',
+      overlayOpacity: 0.65,
+      stagePadding: 8,
+      stageRadius: 10,
+      popoverClass: 'hm-driver-popover',
+      nextBtnText: 'Próximo →',
+      prevBtnText: '← Anterior',
+      doneBtnText: 'Concluir Guia',
+      progressText: 'Passo {{current}} de {{total}}',
+      steps: tourSteps,
+      onDestroyed: () => {
+        try {
+          localStorage.setItem('hm_dashboard_tour_seen', 'true');
+        } catch (e) {
+          /* storage desabilitado/privado */
+        }
+      }
+    });
+
+    driverObj.drive();
+  }
+
+  if (elements.tourButton) {
+    elements.tourButton.addEventListener('click', () => {
+      iniciarTour();
+    });
+  }
+
+  window.iniciarTour = iniciarTour;
+
   // Inicialização
   document.addEventListener('DOMContentLoaded', () => {
     updateHeaderDate();
@@ -578,5 +722,16 @@
     setInterval(() => {
       carregarPacientes(true);
     }, 30000);
+
+    // Dispara o tour automaticamente na primeira visita (após carregamento inicial)
+    try {
+      if (!localStorage.getItem('hm_dashboard_tour_seen')) {
+        setTimeout(() => {
+          iniciarTour();
+        }, 1200);
+      }
+    } catch (e) {
+      /* storage desabilitado/privado */
+    }
   });
 })();

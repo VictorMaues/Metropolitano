@@ -246,6 +246,40 @@ svg {
   font-size: 13px;
 }
 
+.intro-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-tour {
+  border: 1px solid #cce3e3;
+  background: var(--soft);
+  border-radius: 9px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--teal-dark);
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(24, 60, 76, 0.03);
+  transition: background-color 0.2s, box-shadow 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.btn-tour:hover {
+  background: #d4ecea;
+  border-color: #b3dcd9;
+  color: #044b50;
+  box-shadow: 0 4px 10px rgba(8, 124, 131, 0.12);
+}
+
+.btn-tour svg {
+  width: 15px;
+  height: 15px;
+  color: var(--teal);
+}
+
 .refresh {
   border: 1px solid #d7e3e5;
   background: #fff;
@@ -1228,4 +1262,126 @@ body.modal-open {
   .ficha-groups {
     grid-template-columns: 1fr;
   }
+}
+
+/* ------------------------------------------------------------------
+ * Driver.js - Estilização Personalizada Hospital Metropolitano
+ * ------------------------------------------------------------------ */
+.hm-driver-popover.driver-popover {
+  background-color: #ffffff;
+  color: var(--ink);
+  border-radius: 14px;
+  border: 1px solid #dbe5e8;
+  box-shadow: 0 16px 36px rgba(16, 45, 56, 0.22), 0 4px 12px rgba(16, 45, 56, 0.08);
+  padding: 20px 22px;
+  max-width: 360px;
+  min-width: 290px;
+  font-family: "DM Sans", sans-serif;
+  z-index: 1000000000;
+}
+
+.hm-driver-popover .driver-popover-title {
+  font-family: "Manrope", sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: #102d38;
+  letter-spacing: -0.3px;
+  line-height: 1.35;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hm-driver-popover .driver-popover-description {
+  font-size: 13.5px;
+  color: #4a616b;
+  line-height: 1.55;
+  margin-bottom: 18px;
+}
+
+.hm-driver-popover .driver-popover-close-btn {
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  font-size: 20px;
+  color: #8fa0a8;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.hm-driver-popover .driver-popover-close-btn:hover {
+  background-color: #f0f4f6;
+  color: #102d38;
+}
+
+.hm-driver-popover .driver-popover-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #eef2f4;
+  padding-top: 14px;
+  margin-top: 0;
+}
+
+.hm-driver-popover .driver-popover-progress-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--teal);
+  letter-spacing: 0.2px;
+}
+
+.hm-driver-popover .driver-popover-navigation-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.hm-driver-popover .driver-popover-prev-btn {
+  background-color: #f4f7f9 !important;
+  color: #435b64 !important;
+  border: 1px solid #d4dfe2 !important;
+  border-radius: 7px !important;
+  padding: 6px 12px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-shadow: none !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hm-driver-popover .driver-popover-prev-btn:hover {
+  background-color: #e9f0f2 !important;
+  color: #102d38 !important;
+  border-color: #c0cfd4 !important;
+}
+
+.hm-driver-popover .driver-popover-next-btn {
+  background-color: var(--teal) !important;
+  color: #ffffff !important;
+  border: 1px solid var(--teal-dark) !important;
+  border-radius: 7px !important;
+  padding: 6px 14px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  text-shadow: none !important;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(8, 124, 131, 0.25);
+  transition: all 0.2s ease;
+}
+
+.hm-driver-popover .driver-popover-next-btn:hover {
+  background-color: var(--teal-dark) !important;
+  box-shadow: 0 4px 10px rgba(8, 124, 131, 0.35);
+}
+
+.hm-driver-popover .driver-popover-btn-disabled {
+  opacity: 0.4 !important;
+  pointer-events: none !important;
+}
+
+.driver-overlay {
+  transition: opacity 0.25s ease-in-out !important;
 }

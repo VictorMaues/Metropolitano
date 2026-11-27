@@ -17,8 +17,11 @@
     <!-- Ícones Lucide -->
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
 
+    <!-- Driver.js (Tour Guiado) -->
+    <link rel="stylesheet" href="{% static 'pacientes/css/driver.css' %}" />
+
     <!-- Folha de Estilos do Dashboard -->
-    <link rel="stylesheet" href="{% static 'pacientes/css/dashboard_atendimento.css' %}?v=1.4" />
+    <link rel="stylesheet" href="{% static 'pacientes/css/dashboard_atendimento.css' %}?v=1.5" />
   </head>
   <body>
     <!-- Token CSRF para requisições AJAX de status -->
@@ -82,10 +85,16 @@
             <h1 id="page-title">Fila de atendimento</h1>
             <p>Acompanhe a ordem de chegada e o andamento dos atendimentos clínicos.</p>
           </div>
-          <button class="refresh" id="refresh-button" type="button" title="Recarregar pacientes e atualizar horários">
-            <i data-lucide="refresh-cw"></i>
-            <span>Atualizar horários</span>
-          </button>
+          <div class="intro-actions">
+            <button class="btn-tour" id="tour-button" type="button" title="Iniciar guia interativo do painel">
+              <i data-lucide="help-circle"></i>
+              <span>Guia do painel</span>
+            </button>
+            <button class="refresh" id="refresh-button" type="button" title="Recarregar pacientes e atualizar horários">
+              <i data-lucide="refresh-cw"></i>
+              <span>Atualizar horários</span>
+            </button>
+          </div>
         </section>
 
         <!-- Métricas Rápidas -->
@@ -221,6 +230,8 @@
         apiDetalheBaseUrl: "/api/dashboard/paciente/"
       };
     </script>
-    <script src="{% static 'pacientes/js/dashboard_atendimento.js' %}?v=1.3"></script>
+    <!-- Driver.js e Script do Dashboard -->
+    <script src="{% static 'pacientes/js/driver.js.iife.js' %}"></script>
+    <script src="{% static 'pacientes/js/dashboard_atendimento.js' %}?v=1.4"></script>
   </body>
 </html>
