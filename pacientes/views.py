@@ -17,10 +17,78 @@ from .models import Paciente, Senha_de_atendimento
 Senha = Senha_de_atendimento
 
 
+# ---------------------------------------------------------------------------
+# Permissões: Sala de Espera e Kanban (Apenas Adm ou Enfermeiras)
+# ---------------------------------------------------------------------------
+
+def user_tem_permissao_sala_espera_kanban(user):
+    """
+    Verifica se o usuário tem permissão para visualizar a Sala de Espera e o Kanban.
+    Regra: Apenas usuários com acesso Adm ou Enfermeiras.
+    """
+    if not user.is_authenticated:
+        return False
+
+    # Adm, superusuário ou staff
+    if (
+        user.is_superuser
+        or user.is_staff
+        or user.username.lower() in ('adm', 'admin', 'administrador')
+    ):
+        return True
+
+    # Grupos autorizados: Adm ou Enfermeiras
+    grupos_autorizados = {
+        'adm', 'admin', 'administrador', 'administradores', 'administracao', 'administração',
+        'enfermeira', 'enfermeiras', 'enfermeiro', 'enfermeiros',
+    }
+    user_grupos = {g.name.lower() for g in user.groups.all()}
+    if user_grupos.intersection(grupos_autorizados):
+        return True
+
+    return False
+
+
+def adm_ou_enfermeira_required(view_func):
+    """Decorator que restringe o acesso exclusivamente a usuários Adm ou Enfermeiras."""
+    @wraps(view_func)
+    def _wrapped(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect(f"{reverse('admin:login')}?next={request.path}")
+
+        if not user_tem_permissao_sala_espera_kanban(request.user):
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.path.startswith('/api/'):
+                return JsonResponse({
+                    'erro': 'Acesso negado. Apenas usuários Adm ou Enfermeiras têm acesso.'
+                }, status=403)
+            return render(
+                request,
+                'pacientes/acesso_negado.html',
+                {
+                    'usuario': request.user,
+                    'mensagem': 'A <strong>Sala de Espera</strong> e o <strong>Kanban</strong> são de uso exclusivo de quem tem acesso <strong>Adm</strong> ou <strong>Enfermeiras</strong>.',
+                },
+                status=403
+            )
+
+        return view_func(request, *args, **kwargs)
+
+    return _wrapped
+
+
 def view_bemvindo(request):
     """View que exibe a página institucional de boas-vindas."""
     return render(request, 'pacientes/BemVindo.html')
 
+@adm_ou_enfermeira_required
+def view_saladeespera(request):
+    """View que exibe a página institucional de sala de espera."""
+    return render(request, 'pacientes/sala-de-espera.html')
+
+@adm_ou_enfermeira_required
+def view_kanban(request):
+    """View que exibe a página institucional de sala de espera."""
+    return render(request, 'pacientes/kanban.html') 
 
 def pagina_inicial(request):
     """Painel geral de pacientes e visão geral do sistema."""

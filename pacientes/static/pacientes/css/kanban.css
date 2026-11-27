@@ -1,0 +1,357 @@
+/* Paleta usada no cabeçalho, cartões e etapas do painel Kanban. */
+:root {
+  --bg: #f4f6f8;
+  --line: #e2e8f0;
+  --text: #1e293b;
+  --muted: #64748b;
+  --blue: #3b82f6;
+  --orange: #f59e0b;
+  --green: #10b981;
+}
+
+/* Normaliza o modelo de caixa e os espaçamentos iniciais. */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+}
+
+/* Cabeçalho principal, identificação do sistema e ações do usuário. */
+.app-header {
+  display: flex;
+  height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text);
+  font-size: 1.15rem;
+  text-decoration: none;
+}
+
+.brand-mark {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+input,
+select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+}
+
+#patient-search {
+  width: 240px;
+  background: #f8fafc;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+/* Título e filtros disponíveis acima do quadro. */
+.kanban-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem 0.5rem;
+}
+
+.kanban-toolbar h1 {
+  font-size: 1.45rem;
+}
+
+.kanban-toolbar p {
+  margin-top: 0.15rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.toolbar-filters {
+  display: flex;
+  gap: 0.6rem;
+}
+
+/* Colunas do quadro, cada uma representando uma etapa do atendimento. */
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(320px, 1fr));
+  gap: 1.25rem;
+  padding: 1rem 1.5rem 2rem;
+}
+
+.kanban-column {
+  min-height: 70vh;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.kanban-column header {
+  display: flex;
+  height: 62px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1rem;
+  border-top: 4px solid;
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+}
+
+.kanban-column[data-column="chegar"] header {
+  border-top-color: var(--blue);
+}
+
+.kanban-column[data-column="chegada"] header {
+  border-top-color: var(--orange);
+}
+
+.kanban-column[data-column="atendimento"] header {
+  border-top-color: var(--green);
+}
+
+.kanban-column h2 {
+  font-size: 0.95rem;
+}
+
+.count {
+  padding: 0.15rem 0.55rem;
+  border-radius: 99px;
+  background: #f1f5f9;
+  font-size: 0.75rem;
+}
+
+/* Lista de cartões e destaque visual durante o arraste. */
+.cards {
+  display: flex;
+  min-height: 150px;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 0.85rem;
+}
+
+.cards.dragover {
+  outline: 2px dashed #cbd5e1;
+  background: #edf2f7;
+}
+
+.kanban-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.9rem;
+  border: 1px solid var(--line);
+  border-left: 5px solid;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 2px 6px #0001;
+  cursor: grab;
+}
+
+.kanban-card[data-col="chegar"] {
+  border-left-color: var(--blue);
+}
+
+.kanban-card[data-col="chegada"] {
+  border-left-color: var(--orange);
+}
+
+.kanban-card[data-col="atendimento"] {
+  border-left-color: var(--green);
+}
+
+.kanban-card.dragging {
+  opacity: 0.45;
+}
+
+.kanban-card[hidden] {
+  display: none;
+}
+
+/* Identificação do paciente e informações de horário no cartão. */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.patient {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.patient b.avatar {
+  display: flex;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 0.8rem;
+}
+
+.patient strong {
+  font-size: 0.92rem;
+}
+
+.patient small {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.time {
+  text-align: right;
+}
+
+.time small {
+  display: block;
+  color: #94a3b8;
+  font-size: 0.65rem;
+}
+
+.time strong {
+  font-size: 0.9rem;
+}
+
+/* Cores de avatar e etiquetas conforme o estado ou a categoria. */
+.avatar.blue,
+.badge.blue {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.avatar.orange,
+.badge.orange {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.avatar.green,
+.badge.green {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.avatar.red,
+.badge.red {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.badge {
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.badge.gray {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+/* Especialidade e ações disponíveis para cada paciente. */
+.type {
+  padding: 0.45rem 0;
+  border-top: 1px dashed var(--line);
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.action,
+.emergency {
+  align-self: flex-start;
+  padding: 0.35rem 0.65rem;
+  border: 0;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.action {
+  background: var(--green);
+  color: #fff;
+}
+
+.emergency {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+/* Notificações temporárias exibidas sobre o quadro. */
+.toast-container {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 100;
+}
+
+.toast {
+  margin-top: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: var(--text);
+  color: #fff;
+}
+
+/* Em telas médias, mantém as colunas roláveis horizontalmente. */
+@media (max-width: 1024px) {
+  .kanban-board {
+    grid-template-columns: repeat(3, 300px);
+    overflow-x: auto;
+  }
+}
+
+/* Em celulares, empilha o cabeçalho e adapta a busca à largura disponível. */
+@media (max-width: 768px) {
+  .app-header,
+  .kanban-toolbar {
+    height: auto;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .header-actions,
+  #patient-search {
+    width: 100%;
+  }
+}

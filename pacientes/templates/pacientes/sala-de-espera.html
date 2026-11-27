@@ -1,0 +1,52 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hospital Metropolitano - Lista de espera</title>
+<link rel="stylesheet" href="{% static 'pacientes/css/sala-de-espera.css' %}">
+</head>
+<body>
+<aside class="sidebar">
+<div class="logo"><img src="{% static 'pacientes/img/logo.jpg' %}" alt="Logo Hospital Metropolitano"><strong>Hospital Metropolitano</strong></div>
+<input type="search" placeholder="Pesquisar..." aria-label="Pesquisar">
+<nav>
+<a class="expandable" href="#" aria-expanded="true"><span>Agenda</span><span>⌄</span></a>
+<div class="subitems">
+<a href="#">Agendamentos</a>
+<a class="active" href="index.html">Lista de espera</a>
+<a href="kanban">Painel</a>
+</div>
+</nav>
+</aside>
+<div class="main">
+<header class="header"><button class="icon-btn" aria-label="Chat">Chat</button><button class="icon-btn" aria-label="Ajuda">?</button><img src="https://via.placeholder.com/32" alt="Avatar"></header>
+<section class="page-header">
+<div><h1>Lista de espera</h1><p>Agenda</p></div>
+<button class="add-btn" id="open-modal">+ Adicionar paciente</button>
+</section>
+<section class="card">
+<div class="filters"><button>Filtrar</button><span>Situação: Em espera</span><span>Mostrar histórico: Não</span></div>
+<table>
+<thead><tr><th>Data de inclusão</th><th>Paciente</th><th>Idade</th><th>Observações</th><th>Situação</th></tr></thead>
+<tbody>
+<tr><td>15/09/2023 11:44</td><td>Davi Ruan Almeida</td><td>25/09/1960 (63 anos)</td><td>Aguardando exames essenciais</td><td>Em espera</td></tr>
+<tr><td>21/09/2023 16:11</td><td>Allana Bruna Almeida</td><td>25/05/1993 (30 anos)</td><td>Urgência</td><td>Em espera</td></tr>
+<tr><td>21/09/2023 16:13</td><td>Andreia Nina Sebastiana Teixeira</td><td>14/08/1960 (63 anos)</td><td>Precisa de uma nova receita de remédio controlado.</td><td>Em espera</td></tr>
+<tr><td>21/09/2023 16:14</td><td>Isabela Eloá Isabelle Aparicio</td><td>25/09/1941 (82 anos)</td><td>Aguardando exames</td><td>Em espera</td></tr>
+</tbody>
+</table>
+</section>
+</div>
+<div class="modal" id="modal">
+<div class="modal-content"><button class="close" id="close-modal" aria-label="Fechar">&times;</button><h2>Adicionar paciente</h2><p>Formulário de cadastro (a ser implementado).</p></div>
+</div>
+<script>
+const modal=document.getElementById("modal"),toggle=on=>modal.classList.toggle("active",on);
+document.getElementById("open-modal").onclick=()=>toggle(true);
+document.getElementById("close-modal").onclick=()=>toggle(false);
+document.querySelector(".expandable").onclick=e=>{e.preventDefault();let t=e.currentTarget;t.setAttribute("aria-expanded",t.getAttribute("aria-expanded")==="true"?"false":"true")};
+</script>
+</body>
+</html>

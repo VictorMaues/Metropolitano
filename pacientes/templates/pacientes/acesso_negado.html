@@ -114,9 +114,13 @@
     </div>
     <h1>Acesso Restrito</h1>
     <p>
-      O <strong>Dashboard de Atendimento de Pacientes</strong> é de uso exclusivo da equipe médica e assistencial (Doutor/Enfermeira).
-      <br><br>
-      <em>Em ambiente de teste, o acesso está autorizado exclusivamente para a conta <strong>adm</strong>.</em>
+      {% if mensagem %}
+        {{ mensagem|safe }}
+      {% else %}
+        O <strong>Dashboard de Atendimento de Pacientes</strong> é de uso exclusivo da equipe médica e assistencial (Doutor/Enfermeira).
+        <br><br>
+        <em>Em ambiente de teste, o acesso está autorizado exclusivamente para a conta <strong>adm</strong>.</em>
+      {% endif %}
     </p>
 
     <div class="user-box">
@@ -124,8 +128,8 @@
     </div>
 
     <div class="actions">
-      <a href="{% url 'admin:login' %}?next={% url 'dashboard_atendimento' %}" class="btn btn-primary">
-        <i data-lucide="log-in"></i> Entrar com usuário autorizado (adm)
+      <a href="{% url 'admin:login' %}?next={{ request.path }}" class="btn btn-primary">
+        <i data-lucide="log-in"></i> Entrar com usuário autorizado
       </a>
       <a href="{% url 'pagina_inicial' %}" class="btn btn-outline">
         <i data-lucide="arrow-left"></i> Voltar à Página Inicial

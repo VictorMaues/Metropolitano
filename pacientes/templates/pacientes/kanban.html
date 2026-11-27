@@ -1,0 +1,76 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hospital Metropolitano - Painel Sala de Espera</title>
+<link rel="stylesheet" href="{% static 'pacientes/css/kanban.css' %}">
+</head>
+<body>
+<header class="app-header">
+<a href="index.html" class="brand-logo"><img class="brand-mark" src="{% static 'pacientes/img/logo.jpg' %}" alt="Logo Hospital Metropolitano"><strong>Hospital Metropolitano</strong></a>
+<div class="header-actions">
+<input id="patient-search" type="search" placeholder="Buscar paciente ou médico...">
+<img class="avatar" src="https://via.placeholder.com/32" alt="Avatar">
+</div>
+</header>
+<section class="kanban-toolbar">
+<div><h1>Gestão de Sala de Espera</h1><p>Fluxo em tempo real de pacientes na recepção e consultórios.</p></div>
+<div class="toolbar-filters">
+<select id="filter-doctor"><option value="">Todos os Médicos</option><option>Yasmin</option><option>Marcos</option><option>Diego</option></select>
+<select id="filter-room"><option value="">Todas as Salas</option><option>Consultório 1</option><option>Consultório 2</option><option>Sala de Procedimentos</option></select>
+</div>
+</section>
+<main class="kanban-board" id="board"></main>
+<div class="toast-container" id="toast-container"></div>
+<script>
+const columns=[
+["chegar","A chegar"],
+["chegada","Ordem de chegada"],
+["atendimento","Chamados e em atendimento"]
+];
+const cards=[
+{id:"DR",name:"Davi Ruan Almeida",doctor:"Yasmin Flávia Lara Barros",short:"Yasmin",col:"chegar",time:"09:30",status:"Confirmado",statusClass:"blue",extra:["Particular","Consultório 1"],type:"Consulta · Consulta clínica",action:"Paciente chegou",finish:false,room:"Consultório 1"},
+{id:"LE",name:"Lucas Eduardo Silveira",doctor:"Diego Martin Benjamin Vieira",short:"Diego",col:"chegar",time:"10:00",status:"Atrasado 8h 17min",statusClass:"red",extra:["Convênio","Sala de Procedimentos"],type:"Procedimento · Dermatologia",action:"Paciente chegou",finish:false,room:"Sala de Procedimentos"},
+{id:"1º",name:"Allana Bruna Almeida",doctor:"Yasmin Flávia Lara Barros",short:"Yasmin",col:"chegada",time:"09:15",status:"Esperando 21min",statusClass:"orange",extra:["Chegou 09:12","Consultório 1"],type:"Consulta · Retorno Urgente",action:"Emergência",finish:false,room:"Consultório 1",emergency:true},
+{id:"2º",name:"Andreia Nina Sebastiana",doctor:"Marcos Vinicius Luiz Cauã Peixoto",short:"Marcos",col:"chegada",time:"09:30",status:"Esperando 14min",statusClass:"orange",extra:["Chegou 09:19","Consultório 2"],type:"Consulta · Renovação de Receita",finish:false,room:"Consultório 2"},
+{id:"IE",name:"Isabela Eloá Isabelle Aparicio",doctor:"Diego Martin Benjamin Vieira",short:"Diego",col:"atendimento",time:"09:00",status:"Em consulta (18min)",statusClass:"green",extra:["Particular","Sala de Procedimentos"],type:"Consulta · Retorno com Exames",action:"Finalizar Consulta",finish:true,room:"Sala de Procedimentos"}
+];
+const board=document.getElementById("board");
+for(const [key,title] of columns){
+  board.insertAdjacentHTML("beforeend",`<section class="kanban-column" data-column="${key}"><header><h2>${title}</h2><b class="count">0</b></header><div class="cards" id="col-${key}"></div></section>`);
+}
+function cardHtml(c){
+  return `<article class="kanban-card" draggable="true" data-col="${c.col}" data-patient="${c.name}" data-doctor="${c.short}" data-room="${c.room}">
+  <header class="card-header"><div class="patient"><b class="avatar ${c.statusClass}">${c.id}</b><div><strong>${c.name}</strong><small>${c.doctor}</small></div></div><div class="time"><small>AGENDADO</small><strong>${c.time}</strong></div></header>
+  <div class="badges"><span class="badge ${c.statusClass}">${c.status}</span>${c.extra.map(x=>`<span class="badge gray">${x}</span>`).join("")}</div>
+  <p class="type">${c.type}</p>${c.action?`<button class="${c.emergency?"emergency":"action"}" onclick="${c.finish?"finishConsultation":"moveCardNext"}(this)">${c.action}</button>`:""}
+  </article>`;
+}
+for(const c of cards)document.getElementById(`col-${c.col}`).insertAdjacentHTML("beforeend",cardHtml(c));
+function counters(){document.querySelectorAll(".kanban-column").forEach(col=>col.querySelector(".count").textContent=col.querySelectorAll(".kanban-card").length)}
+function toast(msg){const t=document.createElement("div");t.className="toast";t.textContent=msg;document.getElementById("toast-container").append(t);setTimeout(()=>t.remove(),3000)}
+function moveCardNext(btn){const c=btn.closest(".kanban-card");document.getElementById("col-chegada").append(c);c.dataset.col="chegada";counters();toast("Paciente encaminhado para: Ordem de chegada")}
+function finishConsultation(btn){const c=btn.closest(".kanban-card"),name=c.dataset.patient;c.remove();counters();toast(`Consulta finalizada: ${name}!`)}
+let dragged=null;
+document.querySelectorAll(".kanban-card").forEach(card=>{
+card.ondragstart=e=>{dragged=card;card.classList.add("dragging");e.dataTransfer.effectAllowed="move"};
+card.ondragend=()=>{card.classList.remove("dragging");dragged=null;counters()};
+});
+document.querySelectorAll(".cards").forEach(zone=>{
+zone.ondragover=e=>{e.preventDefault();zone.classList.add("dragover")};
+zone.ondragleave=()=>zone.classList.remove("dragover");
+zone.ondrop=e=>{e.preventDefault();zone.classList.remove("dragover");if(dragged){zone.append(dragged);dragged.dataset.col=zone.closest(".kanban-column").dataset.column;dragged.className="kanban-card";counters();toast(`Paciente movido para: ${zone.closest(".kanban-column").querySelector("h2").textContent}`)}};
+});
+function filterCards(){
+const text=document.getElementById("patient-search").value.toLowerCase(),doctor=document.getElementById("filter-doctor").value,room=document.getElementById("filter-room").value;
+document.querySelectorAll(".kanban-card").forEach(c=>c.hidden=!(!text||c.textContent.toLowerCase().includes(text))||!!(doctor&&c.dataset.doctor!==doctor)||!!(room&&c.dataset.room!==room));
+}
+document.getElementById("patient-search").oninput=filterCards;
+document.getElementById("filter-doctor").onchange=filterCards;
+document.getElementById("filter-room").onchange=filterCards;
+counters();
+</script>
+</body>
+</html>

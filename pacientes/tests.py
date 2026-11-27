@@ -254,3 +254,69 @@ class DashboardAtendimentoTests(TestCase):
         self.client.login(username='comum', password='password123')
         resp = self.client.get(reverse('api_detalhe_paciente', args=[self.paciente.pk]))
         self.assertEqual(resp.status_code, 403)
+
+
+class SalaDeEsperaEKanbanPermissionTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        from django.contrib.auth.models import Group
+        self.grupo_doutor = Group.objects.create(name='Doutor')
+        self.grupo_enfermeira = Group.objects.create(name='Enfermeira')
+
+        self.adm = User.objects.create_superuser(
+            username='adm',
+            email='adm@hospital.com',
+            password='admpassword'
+        )
+        self.usuario_comum = User.objects.create_user(
+            username='comum',
+            password='password123'
+        )
+        self.doutor = User.objects.create_user(
+            username='dr_roberto',
+            password='password123'
+        )
+        self.doutor.groups.add(self.grupo_doutor)
+
+        self.enfermeira = User.objects.create_user(
+            username='enf_mariana',
+            password='password123'
+        )
+        self.enfermeira.groups.add(self.grupo_enfermeira)
+
+    def test_anonimo_redireciona_login(self):
+        """Acesso anônimo a /saladeespera e /kanban deve redirecionar para tela de login."""
+        for rota in ('sala-de-espera', 'kanban'):
+            resp = self.client.get(reverse(rota))
+            self.assertEqual(resp.status_code, 302)
+            self.assertIn('/admin/login/', resp.get('Location'))
+
+    def test_usuario_comum_acesso_negado(self):
+        """Usuário sem perfil Adm ou Enfermeira deve receber 403."""
+        self.client.login(username='comum', password='password123')
+        for rota in ('sala-de-espera', 'kanban'):
+            resp = self.client.get(reverse(rota))
+            self.assertEqual(resp.status_code, 403)
+            self.assertContains(resp, 'Acesso Restrito', status_code=403)
+
+    def test_doutor_acesso_negado(self):
+        """Doutor não deve ter acesso (apenas Adm ou Enfermeiras)."""
+        self.client.login(username='dr_roberto', password='password123')
+        for rota in ('sala-de-espera', 'kanban'):
+            resp = self.client.get(reverse(rota))
+            self.assertEqual(resp.status_code, 403)
+            self.assertContains(resp, 'Acesso Restrito', status_code=403)
+
+    def test_enfermeira_tem_acesso(self):
+        """Usuário no grupo Enfermeira deve conseguir acessar /saladeespera e /kanban."""
+        self.client.login(username='enf_mariana', password='password123')
+        for rota in ('sala-de-espera', 'kanban'):
+            resp = self.client.get(reverse(rota))
+            self.assertEqual(resp.status_code, 200)
+
+    def test_adm_tem_acesso(self):
+        """Usuário Adm tem acesso a /saladeespera e /kanban."""
+        self.client.login(username='adm', password='admpassword')
+        for rota in ('sala-de-espera', 'kanban'):
+            resp = self.client.get(reverse(rota))
+            self.assertEqual(resp.status_code, 200)
